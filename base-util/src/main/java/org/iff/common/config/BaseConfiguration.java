@@ -15,15 +15,23 @@ public class BaseConfiguration {
     private static String SNAPPYDATA_CONFIG_FILE = "snappy-data-uri-configs.properties";
     private static String ELASTICSEARCH_CONFIG_FILE = "elasticsearch-configs.properties";
     private static String KAFKA_PRODUCERS_CONFIGS_FILE = "kafka-producers-configs.properties";
+    private static String NETTY_SERVER_CONFIGS_FILE = "netty-server-configs.properties";
     private static String baseConfig = "config/";
 
     public static void setBaseConfig(String targetConfDir) throws IllegalArgumentException {
-        if (StringUtil.isNullOrEmpty(targetConfDir))
-            throw new IllegalArgumentException("The configuration does not have base config. " +
-                    "Could not lookup configurations.");
+        if (StringUtil.isNullOrEmpty(targetConfDir)) throw new IllegalArgumentException(
+                "The configuration does not have base config. Could not lookup configurations.");
         synchronized (baseConfig) {
             BaseConfiguration.baseConfig = targetConfDir;
         }
+    }
+
+    public static String getNettyServerConfigFile() {
+        return baseConfig + NETTY_SERVER_CONFIGS_FILE;
+    }
+
+    public static void setNettyServerConfigsFile(String fileName) {
+        NETTY_SERVER_CONFIGS_FILE = fileName;
     }
 
     public static String getKafkaProducersConfigFile() {

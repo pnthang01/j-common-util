@@ -3,4 +3,6 @@ include 'base-util'
 include 'hadoop-util'
 include 'redis-util'
 include 'kafka-util'
+include 'netty-util'
+include 'jetty-util'
 
