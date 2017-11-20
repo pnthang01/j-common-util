@@ -1,0 +1,6 @@
+rootProject.name = 'common-util'
+include 'base-util'
+include 'hadoop-util'
+include 'redis-util'
+include 'kafka-util'
+

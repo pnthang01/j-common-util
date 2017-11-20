@@ -1,0 +1,30 @@
+group 'org.iff'
+version '1.0'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}\
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+dependencies {
+    compile 'redis.clients:jedis:2.8.1'
+    compile group: 'org.iff', name: 'base-util', version: '1.0'
+    compile 'org.apache.commons:commons-configuration2:2.0'
+    compile 'org.apache.logging.log4j:log4j-core:2.7'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
