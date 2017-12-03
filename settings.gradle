@@ -6,6 +6,6 @@ include 'kafka-util'
 include 'netty-util'
 include 'jetty-util'
 include 'mongodb-util'
-include 'google-drive'
 include 'base-google-api-util'
+include 'google-drive-util'
 

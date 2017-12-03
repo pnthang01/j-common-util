@@ -13,6 +13,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
+    compile group: 'com.etybeno', name: 'base-util', version: '1.0'
     // tag::hadoop&hdfs[]
     compile 'org.apache.hadoop:hadoop-client:2.7.3'
     compile 'org.apache.hadoop:hadoop-common:2.7.3'

@@ -14,7 +14,9 @@ repositories {
 }
 
 dependencies {
-    compile 'com.google.api-client:google-api-client-java6:1.23.0'
+    compile group: 'com.etybeno', name: 'base-util', version: '1.0'
+    compile 'com.etybeno:base-google-api-util:1.0'
     compile 'com.google.apis:google-api-services-drive:v2-rev285-1.23.0'
+    compile 'com.google.api-client:google-api-client:1.23.0'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

@@ -1,4 +1,4 @@
-package org.iff.common.service;
+package com.etybeno.common.service;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.ShardedJedis;

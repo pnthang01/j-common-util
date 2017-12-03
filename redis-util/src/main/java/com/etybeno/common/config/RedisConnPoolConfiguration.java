@@ -1,4 +1,4 @@
-package org.iff.common.config;
+package com.etybeno.common.config;
 
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;

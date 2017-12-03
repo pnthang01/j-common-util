@@ -1,5 +1,6 @@
-package org.iff.common.config;
+package com.etybeno.common.config;
 
+import com.etybeno.common.util.StringUtil;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -7,7 +8,6 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.iff.common.util.StringUtil;
 
 import java.io.IOException;
 import java.io.Serializable;

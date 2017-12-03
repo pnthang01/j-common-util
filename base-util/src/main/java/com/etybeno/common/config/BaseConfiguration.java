@@ -8,6 +8,8 @@ import com.etybeno.common.util.StringUtil;
  */
 public class BaseConfiguration {
 
+    private static String baseConfig = "config/";
+
     private static String REDIS_CONFIG_FILE = "redis-info-configs.properties";
     private static String DRUID_CONFIG_FILE = "druid-uri-configs.properties";
     private static String DATABASE_CONFIG_FILE = "database-info-configs.properties";
@@ -17,7 +19,7 @@ public class BaseConfiguration {
     private static String KAFKA_PRODUCERS_CONFIG_FILE = "kafka-producers-configs.properties";
     private static String NETTY_SERVER_CONFIG_FILE = "netty-server-configs.properties";
     private static String MONGODB_CONFIG_FILE = "mongodb-configs.properties";
-    private static String baseConfig = "config/";
+    private static String GOOGLE_DRIVE_AUTHORIZE_JSON = "client_secrets.json";
 
     public static void setBaseConfig(String targetConfDir) throws IllegalArgumentException {
         if (StringUtil.isNullOrEmpty(targetConfDir)) throw new IllegalArgumentException(
@@ -25,6 +27,14 @@ public class BaseConfiguration {
         synchronized (baseConfig) {
             BaseConfiguration.baseConfig = targetConfDir;
         }
+    }
+
+    public static String getGoogleDriveAuthorizeJson() {
+        return baseConfig + GOOGLE_DRIVE_AUTHORIZE_JSON;
+    }
+
+    public static void setGoogleDriveAuthorizeJson(String fileName) {
+        GOOGLE_DRIVE_AUTHORIZE_JSON = fileName;
     }
 
     public static String getMongodbConfigFile() {
