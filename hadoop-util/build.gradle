@@ -1,4 +1,4 @@
-group 'org.etybeno'
+group 'com.etybeno'
 version '1.0'
 
 apply plugin: 'java'
@@ -12,6 +12,15 @@ repositories {
     mavenLocal()
     mavenCentral()
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
 dependencies {
     compile group: 'com.etybeno', name: 'base-util', version: '1.0'
     // tag::hadoop&hdfs[]

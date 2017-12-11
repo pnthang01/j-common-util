@@ -13,8 +13,19 @@ repositories {
     mavenCentral()
 }
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
 dependencies {
-    compile group: 'org.iff', name: 'base-util', version: '1.0'
+    compile group: 'com.etybeno', name: 'base-util', version: '1.0'
+    compile 'commons-beanutils:commons-beanutils:1.9.3'
+    compile 'org.apache.commons:commons-configuration2:2.0'
+
     compile 'org.apache.commons:commons-configuration2:2.0'
     compile 'org.mongodb:bson:2.13.3'
     compile 'org.mongodb:mongo-java-driver:2.13.3'

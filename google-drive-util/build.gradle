@@ -13,6 +13,14 @@ repositories {
     mavenCentral()
 }
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
 dependencies {
     compile group: 'com.etybeno', name: 'base-util', version: '1.0'
     compile 'com.etybeno:base-google-api-util:1.0'

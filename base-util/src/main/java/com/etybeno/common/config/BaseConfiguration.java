@@ -10,6 +10,7 @@ public class BaseConfiguration {
 
     private static String baseConfig = "config/";
 
+    private static String APPLICATION_CONFIG_FILE = "application-configs.properties";
     private static String REDIS_CONFIG_FILE = "redis-info-configs.properties";
     private static String DRUID_CONFIG_FILE = "druid-uri-configs.properties";
     private static String DATABASE_CONFIG_FILE = "database-info-configs.properties";
@@ -27,6 +28,14 @@ public class BaseConfiguration {
         synchronized (baseConfig) {
             BaseConfiguration.baseConfig = targetConfDir;
         }
+    }
+
+    public static String getApplicationConfigFile() {
+        return baseConfig + APPLICATION_CONFIG_FILE;
+    }
+
+    public static void setApplicationConfigFile(String fileName) {
+        APPLICATION_CONFIG_FILE = fileName;
     }
 
     public static String getGoogleDriveAuthorizeJson() {

@@ -1,9 +1,14 @@
 package com.etybeno.common.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 /**
  * Created by thangpham on 20/11/2017.
  */
 public class StringUtil {
+
+    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public static Long Dot2LongIP(String dottedIP) {
         String[] addrArray = dottedIP.split("\\.");
