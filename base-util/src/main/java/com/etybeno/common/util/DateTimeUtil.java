@@ -2,6 +2,7 @@ package com.etybeno.common.util;
 
 import org.apache.commons.lang3.time.FastDateFormat;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -41,6 +42,14 @@ public class DateTimeUtil {
         return addTime(cal.getTime(), numb, unit);
     }
 
+    public static Date parseDate(String dateStr, String fmt) throws ParseException {
+        return getDateFormat(fmt, null).parse(dateStr);
+    }
+
+    public static Date parseDate(String dateStr, String fmt, TimeZone fromTimeZone) throws ParseException {
+        return getDateFormat(fmt, fromTimeZone).parse(dateStr);
+    }
+
     public static String formatDate(Date dateTime, String fmt) {
         return formatDate(dateTime.getTime(), fmt, null);
     }
@@ -62,6 +71,10 @@ public class DateTimeUtil {
     }
 
     public static String formatDate(long timeInMilis, String fmt, TimeZone tz) {
+        return getDateFormat(fmt, tz).format(timeInMilis);
+    }
+
+    private static FastDateFormat getDateFormat(String fmt, TimeZone tz) {
         ConcurrentMap<String, FastDateFormat> fmtMap = dateFmtMap.get("fmt");
         if (null == fmtMap) {
             fmtMap = new ConcurrentHashMap();
@@ -75,7 +88,7 @@ public class DateTimeUtil {
             fdf = tzId.equals("System") ? FastDateFormat.getInstance(fmt) : FastDateFormat.getInstance(fmt, tz);
             fmtMap.put(tzId, fdf);
         }
-        return fdf.format(timeInMilis);
+        return fdf;
     }
 
     public static Date truncateDateTime(Calendar cal, int at) {
