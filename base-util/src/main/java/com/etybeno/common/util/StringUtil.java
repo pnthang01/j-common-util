@@ -1,6 +1,7 @@
 package com.etybeno.common.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 
 /**
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     public class StringUtil {
 
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    public static final Gson GSON = new Gson();
 
     public static Long Dot2LongIP(String dottedIP) {
         String[] addrArray = dottedIP.split("\\.");

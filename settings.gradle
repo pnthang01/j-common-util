@@ -8,4 +8,5 @@ include 'jetty-util'
 include 'mongodb-util'
 include 'base-google-api-util'
 include 'google-drive-util'
+include 'druid-io-util'
 

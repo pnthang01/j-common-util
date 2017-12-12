@@ -1,4 +1,4 @@
-group 'org.etybeno'
+group 'com.etybeno'
 version '1.0'
 
 apply plugin: 'java'

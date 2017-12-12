@@ -53,6 +53,14 @@ public class DateTimeUtil {
         return formatDate(timeInMilis, fmt, null);
     }
 
+    public static String formatDate(Calendar cal, String fmt, TimeZone tz) {
+        return formatDate(cal.getTimeInMillis(), fmt, tz);
+    }
+
+    public static String formatDate(Date dateTime, String fmt, TimeZone tz) {
+        return formatDate(dateTime.getTime(), fmt, tz);
+    }
+
     public static String formatDate(long timeInMilis, String fmt, TimeZone tz) {
         ConcurrentMap<String, FastDateFormat> fmtMap = dateFmtMap.get("fmt");
         if (null == fmtMap) {
