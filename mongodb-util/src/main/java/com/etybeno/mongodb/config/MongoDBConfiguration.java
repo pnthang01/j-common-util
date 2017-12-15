@@ -29,7 +29,7 @@ public class MongoDBConfiguration {
 
     private static MongoDBConfiguration _instance;
 
-    public synchronized static MongoDBConfiguration load() throws ConfigurationException, IOException  {
+    public synchronized static MongoDBConfiguration _load() throws ConfigurationException, IOException  {
         if (null == _instance) _instance = new MongoDBConfiguration();
         return _instance;
     }

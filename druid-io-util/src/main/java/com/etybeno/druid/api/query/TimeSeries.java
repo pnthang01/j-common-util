@@ -5,7 +5,6 @@
  */
 package com.etybeno.druid.api.query;
 
-import com.etybeno.druid.api.Query;
 import com.etybeno.druid.api.QueryContext;
 import com.etybeno.druid.api.aggregation.Aggregator;
 import com.etybeno.druid.api.filter.Filter;
@@ -23,13 +22,10 @@ import java.util.List;
  *
  * @author thangpham
  */
-public class TimeSeries extends Query<TimeSeriesResponse> {
+public class TimeSeries extends TimeQuery<TimeSeries, TimeSeriesResponse> {
 
     private String queryType = "timeseries";
-    private String dataSource;
     private boolean descending;
-    private List<String> intervals;
-    private IGranularity granularity;
     private Filter filter;
     private List<Aggregator> aggregations;
     private List<PostAggregator> postAggregations;
@@ -40,11 +36,6 @@ public class TimeSeries extends Query<TimeSeriesResponse> {
         return this;
     }
 
-    public TimeSeries dataSource(String datasource) {
-        this.dataSource = datasource;
-        return this;
-    }
-
     public TimeSeries filter(Filter filter) {
         this.filter = filter;
         return this;
@@ -52,24 +43,6 @@ public class TimeSeries extends Query<TimeSeriesResponse> {
 
     public TimeSeries descending(boolean descending) {
         this.descending = descending;
-        return this;
-    }
-
-    public TimeSeries granularity(IGranularity granularity) {
-        this.granularity = granularity;
-        return this;
-    }
-
-    public TimeSeries addIntervals(String... intervals) {
-        if (this.intervals == null) {
-            this.intervals = new ArrayList();
-        }
-        this.intervals.addAll(Arrays.asList(intervals));
-        return this;
-    }
-
-    public TimeSeries intervals(List<String> intervals) {
-        this.intervals = intervals;
         return this;
     }
 

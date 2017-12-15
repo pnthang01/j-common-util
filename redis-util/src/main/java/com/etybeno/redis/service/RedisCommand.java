@@ -56,5 +56,5 @@ public abstract class RedisCommand<T> {
     }
 
     //define the logic at implementer
-    protected abstract T build() throws JedisException;
+    protected abstract T build() throws Exception;
 }

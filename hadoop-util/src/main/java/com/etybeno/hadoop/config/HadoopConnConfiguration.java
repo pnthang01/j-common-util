@@ -23,7 +23,7 @@ public class HadoopConnConfiguration {
 
     public static final String HADOOP_DEFAULT_CLUSTER = "default";
 
-    public synchronized static HadoopConnConfiguration load() throws ConfigurationException {
+    public synchronized static HadoopConnConfiguration _load() throws ConfigurationException {
         if (null == _instance) _instance = new HadoopConnConfiguration();
         return _instance;
     }

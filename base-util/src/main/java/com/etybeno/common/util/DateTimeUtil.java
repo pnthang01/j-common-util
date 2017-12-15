@@ -1,5 +1,6 @@
 package com.etybeno.common.util;
 
+import com.etybeno.common.model.IntervalModel;
 import org.apache.commons.lang3.time.FastDateFormat;
 
 import java.text.ParseException;
@@ -18,16 +19,22 @@ public class DateTimeUtil {
     //<Format, <TimeZone, FastDateFormat>>
     private static ConcurrentMap<String, ConcurrentMap<String, FastDateFormat>> dateFmtMap;
 
+    public static final String YYYYMMDD_DASH = "yyyy-MM-dd";
+    public static final String YYYYMMDDHH_DASH = "yyyy-MM-dd-HH";
     public static final String DDMMYYYY_DASH = "dd-MM-yyyy";
-    public static final String DDMMYYYYHH_DASH = "yyyy-MM-dd-HH";
+    public static final String HHDDMMYYYY_DASH = "HH-dd-MM-yyyy";
 
     static {
         synchronized (DateTimeUtil.class) {
             dateFmtMap = new ConcurrentHashMap<>();
+            dateFmtMap.put(YYYYMMDD_DASH, new ConcurrentHashMap<>());
+            dateFmtMap.get(YYYYMMDD_DASH).put("System", FastDateFormat.getInstance(YYYYMMDD_DASH));
+            dateFmtMap.put(YYYYMMDDHH_DASH, new ConcurrentHashMap<>());
+            dateFmtMap.get(YYYYMMDDHH_DASH).put("System", FastDateFormat.getInstance(YYYYMMDDHH_DASH));
             dateFmtMap.put(DDMMYYYY_DASH, new ConcurrentHashMap<>());
             dateFmtMap.get(DDMMYYYY_DASH).put("System", FastDateFormat.getInstance(DDMMYYYY_DASH));
-            dateFmtMap.put(DDMMYYYYHH_DASH, new ConcurrentHashMap<>());
-            dateFmtMap.get(DDMMYYYYHH_DASH).put("System", FastDateFormat.getInstance(DDMMYYYYHH_DASH));
+            dateFmtMap.put(HHDDMMYYYY_DASH, new ConcurrentHashMap<>());
+            dateFmtMap.get(HHDDMMYYYY_DASH).put("System", FastDateFormat.getInstance(HHDDMMYYYY_DASH));
         }
     }
 
@@ -115,6 +122,20 @@ public class DateTimeUtil {
         return stretchDateTime(cal.getTime(), at);
     }
 
+    public static Date[] getLastDays(int lastDays) {
+        Calendar cal = Calendar.getInstance();
+        Date toDate = cal.getTime();
+        cal.add(Calendar.DATE, -lastDays);
+        return new Date[]{cal.getTime(), toDate};
+    }
+
+    public static Date[] getLastHours(int lastHours) {
+        Calendar cal = Calendar.getInstance();
+        Date toHour = cal.getTime();
+        cal.add(Calendar.HOUR_OF_DAY, -lastHours);
+        return new Date[]{cal.getTime(), toHour};
+    }
+
     public static Date stretchDateTime(Date date, int at) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -129,5 +150,33 @@ public class DateTimeUtil {
             cal.set(Calendar.MILLISECOND, 999);
         }
         return cal.getTime();
+    }
+
+    public static IntervalModel convertToInterval(String fromTimeStr, String toTimeStr, int lastDays, int lastHours) {
+        IntervalModel rs = null;
+        if ((StringUtil.isNullOrEmpty(fromTimeStr) && !fromTimeStr.equals("-"))
+                || StringUtil.isNullOrEmpty(toTimeStr) && !toTimeStr.equals("-")) {
+            try {
+                rs = new IntervalModel(fromTimeStr, toTimeStr, YYYYMMDD_DASH);
+            } catch (ParseException ex) {
+                try {
+                    rs = new IntervalModel(fromTimeStr, toTimeStr, YYYYMMDDHH_DASH);
+                } catch (ParseException e) {
+
+                }
+            }
+        }
+        if (null == rs && lastDays > -1) {
+            Date[] dates = getLastDays(lastDays);
+            rs = new IntervalModel(dates[0], dates[1], YYYYMMDD_DASH);
+        }
+        if (null == rs && lastHours > -1) {
+            Date[] dates = getLastHours(lastHours);
+            rs = new IntervalModel(dates[0], dates[1], YYYYMMDDHH_DASH);
+        }
+        if (null == rs)
+            throw new IllegalArgumentException(String.format("Could not convert to interval model with from_time = %s, " +
+                    "to_time = %s, last_days = %d, last_hours = %d", fromTimeStr, toTimeStr, lastDays, lastHours));
+        return rs;
     }
 }

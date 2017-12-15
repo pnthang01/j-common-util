@@ -6,7 +6,6 @@
 package com.etybeno.druid.api.query;
 
 import com.etybeno.druid.api.PagingSpec;
-import com.etybeno.druid.api.Query;
 import com.etybeno.druid.api.QueryContext;
 import com.etybeno.druid.api.filter.Filter;
 import com.etybeno.druid.api.granularity.IGranularity;
@@ -22,14 +21,11 @@ import java.util.List;
  *
  * @author thangpham
  */
-public class Select extends Query<SelectResponse> {
+public class Select extends TimeQuery<Select, SelectResponse> {
 
     private String queryType = "select";
-    private String dataSource;
-    private List<String> intervals;
     private boolean descending;
     private Filter filter;
-    private IGranularity granularity;
     private List<String> dimensions;
     private List<String> metrics;
     private PagingSpec pagingSpec;
@@ -52,29 +48,6 @@ public class Select extends Query<SelectResponse> {
 
     public Select descending(boolean descending) {
         this.descending = descending;
-        return this;
-    }
-
-    public Select intervals(Collection<String> intervals) {
-        this.intervals = new ArrayList(intervals);
-        return this;
-    }
-
-    public Select intervals(String... intervals) {
-        if (this.intervals == null) {
-            this.intervals = new ArrayList();
-        }
-        this.intervals.addAll(Arrays.asList(intervals));
-        return this;
-    }
-
-    public Select dataSource(String dataSource) {
-        this.dataSource = dataSource;
-        return this;
-    }
-
-    public Select granularity(IGranularity granularity) {
-        this.granularity = granularity;
         return this;
     }
 

@@ -22,14 +22,14 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class RedisInfoConfiguration implements Serializable {
 
-    private Configuration config = null;
-    private ConcurrentMap<String, List<RedisInfo>> redisMap;
     private static RedisInfoConfiguration _instance = null;
-
-    public synchronized static RedisInfoConfiguration load() throws ConfigurationException {
+    public synchronized static RedisInfoConfiguration _load() throws ConfigurationException {
         if (null == _instance) _instance = new RedisInfoConfiguration();
         return _instance;
     }
+
+    private Configuration config = null;
+    private ConcurrentMap<String, List<RedisInfo>> redisMap;
 
     public RedisInfoConfiguration() throws ConfigurationException {
         Parameters params = new Parameters();

@@ -114,7 +114,7 @@ public class IntervalModel {
 
     private Date parseDate(String targetStr) throws ParseException {
         if (StringUtil.isNullOrEmpty(format)) {
-            return DateTimeUtil.parseDate(targetStr, DateTimeUtil.DDMMYYYYHH_DASH);
+            return DateTimeUtil.parseDate(targetStr, DateTimeUtil.YYYYMMDDHH_DASH);
         } else {
             return DateTimeUtil.parseDate(targetStr, format);
         }
@@ -126,8 +126,8 @@ public class IntervalModel {
 
     public int getTimeType() {
         if(timeType == -2) {
-            if(format.equals("yyyy-MM-dd")) timeType = Calendar.DATE;
-            else if(format.equals("yyyy-MM-dd-HH")) timeType = Calendar.HOUR_OF_DAY;
+            if(format.equals(DateTimeUtil.YYYYMMDD_DASH)) timeType = Calendar.DATE;
+            else if(format.equals(DateTimeUtil.YYYYMMDDHH_DASH)) timeType = Calendar.HOUR_OF_DAY;
             else timeType = -1;
         }
         return timeType;

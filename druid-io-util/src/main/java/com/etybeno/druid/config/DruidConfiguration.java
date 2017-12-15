@@ -20,7 +20,7 @@ public class DruidConfiguration {
 
     private static DruidConfiguration _instance;
 
-    public synchronized static DruidConfiguration load() throws ConfigurationException, IOException {
+    public synchronized static DruidConfiguration _load() throws ConfigurationException, IOException {
         if (null == _instance) _instance = new DruidConfiguration();
         return _instance;
     }

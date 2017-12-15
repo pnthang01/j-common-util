@@ -5,7 +5,6 @@
  */
 package com.etybeno.druid.api.query;
 
-import com.etybeno.druid.api.Query;
 import com.etybeno.druid.api.QueryContext;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
@@ -17,20 +16,15 @@ import java.util.List;
  *
  * @author thangpham
  */
-public class TimeBoundary extends Query<TimeBoundaryResponse> {
+public class TimeBoundary extends Query<TimeBoundary, TimeBoundaryResponse> {
 
-    private String queryType = "timeBoundary";
+    private final String queryType = "timeBoundary";
     private String dataSource;
     private Bound bound;
     private QueryContext context;
 
     public TimeBoundary context(QueryContext context) {
         this.context = context;
-        return this;
-    }
-
-    public TimeBoundary dataSource(String dataSource) {
-        this.dataSource = dataSource;
         return this;
     }
 
@@ -53,7 +47,7 @@ public class TimeBoundary extends Query<TimeBoundaryResponse> {
         private final String value;
 
         /**
-         * @param text
+         * @param value
          */
         private Bound(final String value) {
             this.value = value;

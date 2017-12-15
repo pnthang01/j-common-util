@@ -30,7 +30,7 @@ public class KafkaLogHandler implements Runnable {
     public KafkaLogHandler(int producerSize, String topic, String topicNaming) throws ConfigurationException {
         this.producers = new ArrayList();
         for (int i = 0; i < producerSize; ++i) {
-            Producer<String, String> tmp = KafkaProducerConfiguration.load().initNewProducer(topicNaming);
+            Producer<String, String> tmp = KafkaProducerConfiguration._load().initNewProducer(topicNaming);
             this.producers.add(tmp);
         }
         this.logsQueue = new ConcurrentLinkedQueue<>();
@@ -89,7 +89,7 @@ public class KafkaLogHandler implements Runnable {
                                 producer.flush();
                                 producer.close();
                             }
-                            producer = KafkaProducerConfiguration.load().initNewProducer(topicNaming);
+                            producer = KafkaProducerConfiguration._load().initNewProducer(topicNaming);
                             producers.set(index, producer);
                             LOGGER.info("New Kafka Producer has been initialized, at topic: " + topic + " with count: " + count);
                             LOGGER.error(topic, "Add log to producer fail : ", ex);

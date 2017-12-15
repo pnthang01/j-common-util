@@ -36,7 +36,7 @@ public class KafkaProducerConfiguration {
 
     private ScheduledExecutorService executor;
 
-    public synchronized static KafkaProducerConfiguration load() throws ConfigurationException {
+    public synchronized static KafkaProducerConfiguration _load() throws ConfigurationException {
         if (null == _instance) _instance = new KafkaProducerConfiguration();
         return _instance;
     }

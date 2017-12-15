@@ -11,25 +11,25 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import java.io.IOException;
 
 /**
- * Created by thangpham on 10/12/2017.
+ * Created by thangpham on 15/12/2017.
  */
-public class ApplicationConfiguration {
+public class RestDataConfiguration {
 
-    private static ApplicationConfiguration _instance;
+    private static RestDataConfiguration _instance;
 
-    public synchronized static ApplicationConfiguration _load() throws ConfigurationException, IOException {
-        if (null == _instance) _instance = new ApplicationConfiguration();
+    public synchronized static RestDataConfiguration _load() throws ConfigurationException, IOException {
+        if (null == _instance) _instance = new RestDataConfiguration();
         return _instance;
     }
 
     private Configuration config = null;
 
-    public ApplicationConfiguration() throws ConfigurationException, IOException {
+    public RestDataConfiguration() throws ConfigurationException, IOException {
         Parameters params = new Parameters();
         FileBasedConfigurationBuilder<FileBasedConfiguration> builder
                 = new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
                 .configure(params.properties()
-                        .setFileName(BaseConfiguration.getApplicationConfigFile())
+                        .setFileName(BaseConfiguration.getRestDataConfigFile())
                         .setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
         config = builder.getConfiguration();
     }

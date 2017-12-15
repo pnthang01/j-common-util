@@ -22,7 +22,7 @@ public class RedisInfo {
     protected void initThePool() throws ConfigurationException, IOException {
         List<JedisShardInfo> shardInfos = new ArrayList<JedisShardInfo>(1);
         shardInfos.add(new JedisShardInfo(getHost(), getPort(), 0));
-        shardedJedisPool = new ShardedJedisPool(RedisConnPoolConfiguration.load().getJedisPoolConfig(), shardInfos);
+        shardedJedisPool = new ShardedJedisPool(RedisConnPoolConfiguration._load().getJedisPoolConfig(), shardInfos);
     }
 
     public RedisInfo(String host, int port) throws ConfigurationException, IOException {

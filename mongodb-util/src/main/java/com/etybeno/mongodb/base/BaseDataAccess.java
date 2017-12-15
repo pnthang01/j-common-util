@@ -24,7 +24,7 @@ public abstract class BaseDataAccess<T> {
     protected BaseDataAccess(String clientName, String dbName) throws Exception {
         this.clientName = clientName;
         this.dbName = dbName;
-        this.db = MongoDBConfiguration.load().getMongoDB(clientName, dbName);
+        this.db = MongoDBConfiguration._load().getMongoDB(clientName, dbName);
 
         Type superclass = getClass().getGenericSuperclass();
         ParameterizedType parameterized = (ParameterizedType) superclass;

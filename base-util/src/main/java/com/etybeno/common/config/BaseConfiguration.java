@@ -20,6 +20,7 @@ public class BaseConfiguration {
     private static String KAFKA_PRODUCERS_CONFIG_FILE = "kafka-producers-configs.properties";
     private static String NETTY_SERVER_CONFIG_FILE = "netty-server-configs.properties";
     private static String MONGODB_CONFIG_FILE = "mongodb-configs.properties";
+    private static String REST_DATA_CONFIG_FILE = "rest-data-configs.properties";
     private static String GOOGLE_DRIVE_AUTHORIZE_JSON = "client_secrets.json";
 
     public static void setBaseConfig(String targetConfDir) throws IllegalArgumentException {
@@ -32,6 +33,14 @@ public class BaseConfiguration {
 
     public static String getApplicationConfigFile() {
         return baseConfig + APPLICATION_CONFIG_FILE;
+    }
+
+    public static String getRestDataConfigFile() {
+        return baseConfig + REST_DATA_CONFIG_FILE;
+    }
+
+    public static void setRestDataConfigFile(String restDataConfigFile) {
+        REST_DATA_CONFIG_FILE = restDataConfigFile;
     }
 
     public static void setApplicationConfigFile(String fileName) {

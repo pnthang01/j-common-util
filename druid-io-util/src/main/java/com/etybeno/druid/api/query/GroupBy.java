@@ -6,7 +6,6 @@
 package com.etybeno.druid.api.query;
 
 import com.etybeno.druid.api.LimitSpec;
-import com.etybeno.druid.api.Query;
 import com.etybeno.druid.api.QueryContext;
 import com.etybeno.druid.api.aggregation.Aggregator;
 import com.etybeno.druid.api.filter.Filter;
@@ -25,18 +24,15 @@ import java.util.List;
  *
  * @author thaonguyen
  */
-public class GroupBy extends Query<GroupByResponse> {
+public class GroupBy extends TimeQuery<GroupBy, GroupByResponse> {
 
-    private String queryType = "groupBy";
-    private String dataSource;
+    private final String queryType = "groupBy";
     private List<String> dimensions;
     private LimitSpec limitSpec;
     private Having having;
-    private IGranularity granularity;
     private Filter filter;
     private List<Aggregator> aggregations;
     private List<PostAggregator> postAggregations;
-    private List<String> intervals;
     private QueryContext context;
 
     public GroupBy having(Having having) {
@@ -56,29 +52,6 @@ public class GroupBy extends Query<GroupByResponse> {
 
     public GroupBy filter(Filter filter) {
         this.filter = filter;
-        return this;
-    }
-
-    public GroupBy intervals(String... interval) {
-        this.intervals = Arrays.asList(interval);
-        return this;
-    }
-
-    public GroupBy addIntervals(String... intervals) {
-        if (this.intervals == null) {
-            this.intervals = new ArrayList();
-        }
-        this.intervals.addAll(Arrays.asList(intervals));
-        return this;
-    }
-
-    public GroupBy dataSource(String dataSource) {
-        this.dataSource = dataSource;
-        return this;
-    }
-
-    public GroupBy granularity(IGranularity granularity) {
-        this.granularity = granularity;
         return this;
     }
 

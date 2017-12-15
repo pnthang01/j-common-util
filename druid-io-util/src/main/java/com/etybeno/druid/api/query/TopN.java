@@ -5,7 +5,6 @@
  */
 package com.etybeno.druid.api.query;
 
-import com.etybeno.druid.api.Query;
 import com.etybeno.druid.api.QueryContext;
 import com.etybeno.druid.api.aggregation.Aggregator;
 import com.etybeno.druid.api.filter.Filter;
@@ -22,12 +21,9 @@ import java.util.List;
  *
  * @author thangpham
  */
-public class TopN extends Query<TopNResponse> {
+public class TopN extends TimeQuery<TopN, TopNResponse> {
 
-    private String queryType = "topN";
-    private String dataSource;
-    private List<String> intervals;
-    private IGranularity granularity;
+    private final String queryType = "topN";
     private Filter filter;
     private List<Aggregator> aggregations;
     private List<PostAggregator> postAggregations;
@@ -46,11 +42,6 @@ public class TopN extends Query<TopNResponse> {
         return this;
     }
 
-    public TopN dataSource(String datasource) {
-        this.dataSource = datasource;
-        return this;
-    }
-
     public TopN dimension(String dimension) {
         this.dimension = dimension;
         return this;
@@ -63,11 +54,6 @@ public class TopN extends Query<TopNResponse> {
 
     public TopN metric(String metric) {
         this.metric = metric;
-        return this;
-    }
-
-    public TopN granularity(IGranularity granularity) {
-        this.granularity = granularity;
         return this;
     }
 
@@ -94,19 +80,6 @@ public class TopN extends Query<TopNResponse> {
 
     public TopN postAggregations(List<PostAggregator> postAggs) {
         this.postAggregations = postAggs;
-        return this;
-    }
-
-    public TopN addIntervals(String... intervals) {
-        if (this.intervals == null) {
-            this.intervals = new ArrayList();
-        }
-        this.intervals.addAll(Arrays.asList(intervals));
-        return this;
-    }
-
-    public TopN intervals(List<String> intervals) {
-        this.intervals = intervals;
         return this;
     }
 

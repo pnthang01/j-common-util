@@ -20,7 +20,7 @@ public class RedisConnPoolConfiguration {
     private Configuration config = null;
     private static RedisConnPoolConfiguration _instance = null;
 
-    public synchronized static RedisConnPoolConfiguration load() throws ConfigurationException, IOException {
+    public synchronized static RedisConnPoolConfiguration _load() throws ConfigurationException, IOException {
         if (null == _instance) _instance = new RedisConnPoolConfiguration();
         return _instance;
     }
