@@ -19,7 +19,9 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class HttpClientUtil {
 
-    public static final Charset CHARSET_UTF8 = Charset.forName("UTF-8");
+    public static final Charset UTF8 = Charset.forName("UTF-8");
+    public static final String GZIP = "gzip";
+    public static final String APPLICATION_JSON = "application/json";
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 5.1; rv:9.0) Gecko/20100101 Firefox/9.0";
     public static final String MOBILE_USER_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2; en-us; DROID2 GLOBAL Build/S273) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
 
@@ -63,38 +65,39 @@ public class HttpClientUtil {
     }
 
     public String executePost(URL url, String bodyContent) throws Exception {
-        return executeRequest(url, HttpPost.METHOD_NAME, bodyContent, null, null, null);
+        return executeRequest(url, HttpPost.METHOD_NAME, bodyContent, USER_AGENT, UTF8, APPLICATION_JSON, GZIP);
     }
 
     public String executePost(String url, String bodyContent) throws Exception {
-        return executeRequest(new URL(url), HttpPost.METHOD_NAME, bodyContent, null, null, null);
+        return executeRequest(new URL(url), HttpPost.METHOD_NAME, bodyContent, USER_AGENT, UTF8, APPLICATION_JSON, GZIP);
     }
 
     public String executePost(URL url, String bodyContent, String userAgent, String acceptCharset, String accept) throws Exception {
-        return executeRequest(url, HttpPost.METHOD_NAME, bodyContent, userAgent, acceptCharset, accept);
+        return executeRequest(url, HttpPost.METHOD_NAME, bodyContent, userAgent, Charset.forName(acceptCharset), accept, GZIP);
     }
 
     public String executePost(String url, String bodyContent, String userAgent, String acceptCharset, String accept) throws Exception {
-        return executeRequest(new URL(url), HttpPost.METHOD_NAME, bodyContent, userAgent, acceptCharset, accept);
+        return executeRequest(new URL(url), HttpPost.METHOD_NAME, bodyContent, userAgent, Charset.forName(acceptCharset), accept, GZIP);
     }
 
     public String executeGet(URL url) throws Exception {
-        return executeRequest(url, HttpGet.METHOD_NAME, null, null, null, null);
+        return executeRequest(url, HttpGet.METHOD_NAME, USER_AGENT, USER_AGENT, UTF8, APPLICATION_JSON, GZIP);
     }
 
     public String executeGet(String url) throws Exception {
-        return executeRequest(new URL(url), HttpGet.METHOD_NAME, null, null, null, null);
+        return executeRequest(new URL(url), HttpGet.METHOD_NAME, null, USER_AGENT, UTF8, null, GZIP);
     }
 
     public String executeDelete(URL url) throws Exception {
-        return executeRequest(url, HttpDelete.METHOD_NAME, null, null, null, null);
+        return executeRequest(url, HttpDelete.METHOD_NAME, null, USER_AGENT, UTF8, APPLICATION_JSON, GZIP);
     }
 
     public String executeDelete(String url) throws Exception {
-        return executeRequest(new URL(url), HttpDelete.METHOD_NAME, null, null, null, null);
+        return executeRequest(new URL(url), HttpDelete.METHOD_NAME, null,USER_AGENT, UTF8, APPLICATION_JSON, GZIP);
     }
 
-    private String executeRequest(URL url, String method, String bodyContent, String userAgent, String acceptCharset, String accept) throws Exception {
+    private String executeRequest(URL url, String method, String bodyContent, String userAgent, Charset acceptCharset,
+                                  String contentType, String contentEncoding) throws Exception {
         CloseableHttpResponse response = null;
         CloseableHttpClient httpClient = null;
         try {
@@ -111,15 +114,16 @@ public class HttpClientUtil {
                 throw new IllegalArgumentException("Http Method does not satisfy");
             }
             if (!StringUtil.isNullOrEmpty(userAgent)) httpRequest.setHeader("User-Agent", userAgent);
-            if (!StringUtil.isNullOrEmpty(userAgent)) httpRequest.setHeader("Accept-Charset", acceptCharset);
-            if (!StringUtil.isNullOrEmpty(userAgent)) httpRequest.setHeader("Accept", accept);
+            if (!StringUtil.isNullOrEmpty(acceptCharset)) httpRequest.setHeader("Accept-Charset", acceptCharset.name());
+            if (!StringUtil.isNullOrEmpty(contentType)) httpRequest.setHeader("Content-Type", contentType);
+            if (!StringUtil.isNullOrEmpty(contentEncoding)) httpRequest.setHeader("Content-Encoding", contentEncoding);
             httpClient = getThreadSafeClient();
             response = httpClient.execute(httpRequest);
             int code = response.getStatusLine().getStatusCode();
             if (code == 200 || code == 202) {
                 HttpEntity entity = response.getEntity();
                 if (entity != null) {
-                    String html = EntityUtils.toString(entity, CHARSET_UTF8);
+                    String html = EntityUtils.toString(entity, UTF8);
                     EntityUtils.consume(entity);
                     return html;
                 }

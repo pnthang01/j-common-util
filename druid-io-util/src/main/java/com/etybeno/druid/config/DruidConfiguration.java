@@ -43,11 +43,11 @@ public class DruidConfiguration {
         DruidClusterInfo druidClusterInfo = clusters.get(clusterName);
         if (null == druidClusterInfo) {
             druidClusterInfo = new DruidClusterInfo();
-            druidClusterInfo.setDatasourceURI(config.getString("druid.uri." + clusterName + ".datasource"));
-            druidClusterInfo.setMetadataURI(config.getString("druid.uri." + clusterName + ".metadata_datasource"));
-            druidClusterInfo.setQueryURI(config.getString("druid.uri." + clusterName + ".query"));
-            druidClusterInfo.setRuleURI(config.getString("druid.uri." + clusterName + ".rule"));
-            druidClusterInfo.setTaskURI(config.getString("druid.uri." + clusterName + ".post_task"));
+            druidClusterInfo.setDatasourceURI(config.getString("data.druid." + clusterName + ".datasource"));
+            druidClusterInfo.setMetadataURI(config.getString("data.druid." + clusterName + ".metadata_datasource"));
+            druidClusterInfo.setQueryURI(config.getString("data.druid." + clusterName + ".query"));
+            druidClusterInfo.setRuleURI(config.getString("data.druid." + clusterName + ".rule"));
+            druidClusterInfo.setTaskURI(config.getString("data.druid." + clusterName + ".post_task"));
             clusters.put(clusterName, druidClusterInfo);
         }
         return druidClusterInfo;

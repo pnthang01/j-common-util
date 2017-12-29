@@ -6,6 +6,7 @@ import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoDatabase;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -13,6 +14,8 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -22,6 +25,9 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+
 /**
  * Created by thangpham on 27/11/2017.
  */
@@ -29,7 +35,7 @@ public class MongoDBConfiguration {
 
     private static MongoDBConfiguration _instance;
 
-    public synchronized static MongoDBConfiguration _load() throws ConfigurationException, IOException  {
+    public synchronized static MongoDBConfiguration _load() throws ConfigurationException, IOException {
         if (null == _instance) _instance = new MongoDBConfiguration();
         return _instance;
     }
@@ -76,9 +82,11 @@ public class MongoDBConfiguration {
         return client;
     }
 
-    public DB getMongoDB(String clientName, String dbName) throws UnknownHostException {
+    public MongoDatabase getMongoDB(String clientName, String dbName) throws UnknownHostException {
         MongoClient mongoClient = getMongoClient(clientName);
-        return mongoClient.getDB(dbName);
+        CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
+                fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+        return mongoClient.getDatabase(dbName).withCodecRegistry(pojoCodecRegistry);
     }
 
 }

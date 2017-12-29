@@ -38,10 +38,10 @@ public class DateTimeUtil {
         }
     }
 
-    public static Date addTime(Date date, int numb, int unit) {
+    public static Date addTime(Date date, int amount, int unit) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.add(numb, unit);
+        cal.add(unit, amount);
         return cal.getTime();
     }
 
@@ -118,22 +118,26 @@ public class DateTimeUtil {
         return cal.getTime();
     }
 
-    public static Date stretchDateTime(Calendar cal, int at) {
-        return stretchDateTime(cal.getTime(), at);
-    }
-
     public static Date[] getLastDays(int lastDays) {
         Calendar cal = Calendar.getInstance();
+        cal.setTime(truncateDateTime(cal, Calendar.DATE));
+        cal.add(Calendar.DATE, -1);
         Date toDate = cal.getTime();
-        cal.add(Calendar.DATE, -lastDays);
+        cal.add(Calendar.DATE, -lastDays + 1);
         return new Date[]{cal.getTime(), toDate};
     }
 
     public static Date[] getLastHours(int lastHours) {
         Calendar cal = Calendar.getInstance();
+        cal.setTime(truncateDateTime(cal, Calendar.HOUR_OF_DAY));
+        cal.add(Calendar.HOUR_OF_DAY, -1);
         Date toHour = cal.getTime();
-        cal.add(Calendar.HOUR_OF_DAY, -lastHours);
+        cal.add(Calendar.HOUR_OF_DAY, -lastHours + 1);
         return new Date[]{cal.getTime(), toHour};
+    }
+
+    public static Date stretchDateTime(Calendar cal, int at) {
+        return stretchDateTime(cal.getTime(), at);
     }
 
     public static Date stretchDateTime(Date date, int at) {
@@ -154,13 +158,13 @@ public class DateTimeUtil {
 
     public static IntervalModel convertToInterval(String fromTimeStr, String toTimeStr, int lastDays, int lastHours) {
         IntervalModel rs = null;
-        if ((StringUtil.isNullOrEmpty(fromTimeStr) && !fromTimeStr.equals("-"))
-                || StringUtil.isNullOrEmpty(toTimeStr) && !toTimeStr.equals("-")) {
+        if (!StringUtil.isNullOrEmpty(fromTimeStr) && !fromTimeStr.equals("-")
+                && !StringUtil.isNullOrEmpty(toTimeStr) && !toTimeStr.equals("-")) {
             try {
-                rs = new IntervalModel(fromTimeStr, toTimeStr, YYYYMMDD_DASH);
+                rs = IntervalModel.getInstance(fromTimeStr, toTimeStr, YYYYMMDD_DASH, Calendar.DATE);
             } catch (ParseException ex) {
                 try {
-                    rs = new IntervalModel(fromTimeStr, toTimeStr, YYYYMMDDHH_DASH);
+                    rs = IntervalModel.getInstance(fromTimeStr, toTimeStr, YYYYMMDDHH_DASH, Calendar.HOUR_OF_DAY);
                 } catch (ParseException e) {
 
                 }
@@ -168,11 +172,11 @@ public class DateTimeUtil {
         }
         if (null == rs && lastDays > -1) {
             Date[] dates = getLastDays(lastDays);
-            rs = new IntervalModel(dates[0], dates[1], YYYYMMDD_DASH);
+            rs = IntervalModel.getInstance(dates[0], dates[1], YYYYMMDD_DASH, Calendar.DATE);
         }
         if (null == rs && lastHours > -1) {
             Date[] dates = getLastHours(lastHours);
-            rs = new IntervalModel(dates[0], dates[1], YYYYMMDDHH_DASH);
+            rs = IntervalModel.getInstance(dates[0], dates[1], YYYYMMDDHH_DASH, Calendar.HOUR_OF_DAY);
         }
         if (null == rs)
             throw new IllegalArgumentException(String.format("Could not convert to interval model with from_time = %s, " +

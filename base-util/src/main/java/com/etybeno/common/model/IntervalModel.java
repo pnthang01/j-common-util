@@ -20,65 +20,53 @@ public class IntervalModel {
     private int timeType = -2;
 
     /**
-     * The date string will be used as from and to date time, it will not be parsed to date time
+     * Your custom Interval format and #Calendar.type
      *
-     * @param date
-     * @throws ParseException
+     * @param fromDateStr
+     * @param toDateStr
+     * @param fmt
+     * @param timeType
      */
-    public IntervalModel(String date) throws ParseException {
-        this(date, date, false);
+    private IntervalModel(String fromDateStr, String toDateStr, String fmt, int timeType) throws ParseException {
+        this(DateTimeUtil.parseDate(fromDateStr, fmt), DateTimeUtil.parseDate(toDateStr, fmt), fmt, timeType);
     }
 
-    /**
-     * Does not parse dates string to time
-     *
-     * @param fromDate
-     * @param toDate
-     * @throws ParseException
-     */
-    public IntervalModel(String fromDate, String toDate) throws ParseException {
-        this(fromDate, toDate, false);
+    private IntervalModel(Date fromDateTime, Date toDateTime, String fmt, int timeType) {
+        if (fromDateTime.compareTo(toDateTime) > 0) throw new IllegalArgumentException("From_time is after To_time");
+        this.fromDate = DateTimeUtil.formatDate(fromDateTime, fmt);
+        this.toDate = DateTimeUtil.formatDate(toDateTime, fmt);
+        this.format = fmt;
+        this.timeType = timeType;
     }
 
-    /**
-     * Use default format yyyy-MM-dd-HH to parse for dates when shouldParse is true
-     *
-     * @param fromDate
-     * @param toDate
-     * @param shouldParse
-     * @throws ParseException
-     */
-    public IntervalModel(String fromDate, String toDate, boolean shouldParse) throws ParseException {
-        this.fromDate = fromDate;
-        this.toDate = toDate;
-        this.format = "yyyy-MM-dd-HH";
-        if (shouldParse) {
-            this.fromDateTime = DateTimeUtil.parseDate(fromDate, format);
-            this.toDateTime = DateTimeUtil.parseDate(toDate, format);
-        } else {
-            this.fromDateTime = null;
-            this.toDateTime = null;
-        }
+    public static IntervalModel getInstance(Date fromDateTime, Date toDateTime, int timeType) {
+        String fmt;
+        if (Calendar.DATE == timeType) fmt = DateTimeUtil.YYYYMMDD_DASH;
+        else fmt = DateTimeUtil.YYYYMMDDHH_DASH;
+        return new IntervalModel(fromDateTime, toDateTime, fmt, timeType);
     }
 
-    public IntervalModel(Date fromDateTime, Date toDateTime) {
-        this(fromDateTime, toDateTime, "yyyy-MM-dd-HH");
+    public static IntervalModel getInstance(String fromStr, String toStr, int timeType) throws ParseException {
+        String fmt;
+        if (Calendar.DATE == timeType) fmt = DateTimeUtil.YYYYMMDD_DASH;
+        else fmt = DateTimeUtil.YYYYMMDDHH_DASH;
+        return new IntervalModel(fromStr, toStr, fmt, timeType);
     }
 
-    public IntervalModel(Date fromDateTime, Date toDateTime, String format) {
-        this.fromDateTime = fromDateTime;
-        this.toDateTime = toDateTime;
-        this.fromDate = DateTimeUtil.formatDate(fromDateTime, format);
-        this.toDate = DateTimeUtil.formatDate(toDateTime, format);
-        this.format = format;
+    public static IntervalModel getInstance(String fromStr, String toStr) throws ParseException {
+        return new IntervalModel(fromStr, toStr, "yyyy-MM-dd-HH", Calendar.HOUR_OF_DAY);
     }
 
-    public IntervalModel(String fromStr, String toStr, String format) throws ParseException {
-        this.fromDateTime = DateTimeUtil.parseDate(fromStr, format);
-        this.toDateTime = DateTimeUtil.parseDate(toStr, format);
-        this.fromDate = fromStr;
-        this.toDate = toStr;
-        this.format = format;
+    public static IntervalModel getInstance(Date fromDateTime, Date toDateTime) throws ParseException {
+        return new IntervalModel(fromDateTime, toDateTime, "yyyy-MM-dd-HH", Calendar.HOUR_OF_DAY);
+    }
+
+    public static IntervalModel getInstance(Date fromDateTime, Date toDateTime, String format, int timeType) {
+        return new IntervalModel(fromDateTime, toDateTime, format, timeType);
+    }
+
+    public static IntervalModel getInstance(String fromStr, String toStr, String format, int timeType) throws ParseException {
+        return new IntervalModel(fromStr, toStr, format, timeType);
     }
 
     @Override
@@ -112,6 +100,10 @@ public class IntervalModel {
         return toDateTime;
     }
 
+    public int getTimeType() {
+        return timeType;
+    }
+
     private Date parseDate(String targetStr) throws ParseException {
         if (StringUtil.isNullOrEmpty(format)) {
             return DateTimeUtil.parseDate(targetStr, DateTimeUtil.YYYYMMDDHH_DASH);
@@ -124,14 +116,90 @@ public class IntervalModel {
         return format;
     }
 
-    public int getTimeType() {
-        if(timeType == -2) {
-            if(format.equals(DateTimeUtil.YYYYMMDD_DASH)) timeType = Calendar.DATE;
-            else if(format.equals(DateTimeUtil.YYYYMMDDHH_DASH)) timeType = Calendar.HOUR_OF_DAY;
-            else timeType = -1;
+    public IntervalModel[] intersection(IntervalModel o) throws ParseException {
+        if (this.timeType != o.timeType)
+            throw new IllegalArgumentException("Time type between two intervals must be the same");
+        if (!this.getFormat().equals(o.format))
+            throw new IllegalArgumentException("Format between two intervals must be the same");
+        String fmt = this.getFormat();
+        int tt = this.timeType;
+        int tvt = this.getToDateTime().compareTo(o.getToDateTime());
+        int fvf = this.getFromDateTime().compareTo(o.getFromDateTime());
+        int tvf = this.getToDateTime().compareTo(o.getFromDateTime());
+        int fvt = this.getFromDateTime().compareTo(o.getToDateTime());
+        IntervalModel left = null, right = null;
+        if (fvf == 0) {
+            if (tvt > 0) right = getInstance(o.getToDateTime(), this.getToDateTime(), fmt, tt);
+            else if (tvt < 0 && tvf > 0) right = getInstance(this.getToDateTime(), o.getToDateTime());
+        } else if (fvf < 0) {
+            if (tvf > 0) {
+                left = getInstance(this.getFromDateTime(), o.getFromDateTime(), fmt, tt);
+                if (tvt > 0) right = getInstance(o.getToDateTime(), this.getToDateTime(), fmt, tt);
+                else if (tvt < 0) right = getInstance(this.getToDateTime(), o.getToDateTime(), fmt, tt);
+            } else {
+                left = this;
+                right = o;
+            }
+        } else if (fvf > 0) {
+            if (fvt < 0) {
+                left = getInstance(o.getFromDateTime(), this.getFromDateTime(), fmt, tt);
+                if (tvt > 0) right = getInstance(o.getToDateTime(), this.getToDateTime(), fmt, tt);
+                else if (tvt < 0) right = getInstance(this.getToDateTime(), o.getToDateTime(), fmt, tt);
+            } else {
+                left = o;
+                right = this;
+            }
         }
-        return timeType;
+        if (null != left && null != right) return new IntervalModel[]{left, right};
+        else if (null != left) return new IntervalModel[]{left};
+        else if (null != right) return new IntervalModel[]{right};
+        else return null;
     }
 
+    public IntervalModel union(IntervalModel o) throws ParseException {
+        if (this.timeType != o.timeType)
+            throw new IllegalArgumentException("Time type between two intervals must be the same");
+        if (!this.getFormat().equals(o.format))
+            throw new IllegalArgumentException("Format between two intervals must be the same");
+        String fmt = this.getFormat();
+        int tt = this.timeType;
+        int tvt = this.getToDateTime().compareTo(o.getToDateTime());
+        int tvf = this.getToDateTime().compareTo(o.getFromDateTime());
+        int fvf = this.getFromDateTime().compareTo(o.getFromDateTime());
+        int fvt = this.getFromDateTime().compareTo(o.getToDateTime());
+        IntervalModel union = null;
+        if (fvf == 0) {
+            if (tvt > 0) union = getInstance(this.getFromDateTime(), o.getToDateTime(), fmt, tt);
+            else if (tvt < 0 && tvf > 0) union = this;
+        } else if (fvf < 0) {
+            if (tvf > 0) {
+                if (tvt > 0) union = o;
+                else if (tvt < 0) union = getInstance(o.getFromDateTime(), this.getToDateTime(), fmt, tt);
+            } else if (tvf == 0) union = getInstance(this.getToDateTime(), this.getToDateTime(), fmt, tt);
+        } else if (fvf > 0) {
+            if (fvt < 0) {
+                if (tvt > 0) union = getInstance(this.getFromDateTime(), o.getToDateTime(), fmt, tt);
+                else union = this;
+            } else if (fvt == 0) union = getInstance(this.getFromDateTime(), this.getFromDateTime(), fmt, tt);
+        }
+        return union;
+    }
 
+//    @Override
+//    public int compareTo(IntervalModel o) {
+//        int rs = 0;
+//        try {
+//            if (this.getFromDateTime().compareTo(o.getFromDateTime()) < 0) rs--;
+//            else if (this.getFromDateTime().compareTo(o.getFromDateTime()) > 0) rs++;
+//            if (this.getFromDateTime().compareTo(o.getToDateTime()) < 0) rs--;
+//            else if (this.getFromDateTime().compareTo(o.getToDateTime()) > 0) rs++;
+//            if (this.getToDateTime().compareTo(o.getToDateTime()) < 0) rs--;
+//            if (this.getToDateTime().compareTo(o.getFromDateTime()) < 0) rs--;
+//
+//
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        return rs;
+//    }
 }

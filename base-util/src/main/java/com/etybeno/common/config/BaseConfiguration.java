@@ -21,7 +21,7 @@ public class BaseConfiguration {
     private static String NETTY_SERVER_CONFIG_FILE = "netty-server-configs.properties";
     private static String MONGODB_CONFIG_FILE = "mongodb-configs.properties";
     private static String REST_DATA_CONFIG_FILE = "rest-data-configs.properties";
-    private static String GOOGLE_DRIVE_AUTHORIZE_JSON = "client_secrets.json";
+    private static String GOOGLE_DRIVE_AUTHORIZE_JSON = "google_drive_client_secrets.json";
 
     public static void setBaseConfig(String targetConfDir) throws IllegalArgumentException {
         if (StringUtil.isNullOrEmpty(targetConfDir)) throw new IllegalArgumentException(
