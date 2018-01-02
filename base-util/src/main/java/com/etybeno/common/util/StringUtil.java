@@ -1,9 +1,13 @@
 package com.etybeno.common.util;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.text.Normalizer;
+import java.util.List;
 
 
 /**
@@ -14,10 +18,17 @@ public class StringUtil {
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     public static final Gson GSON = new Gson();
 
+    private static final Type LIST_JSON_TYPE = new TypeToken<List<String>>() {
+    }.getType();
+
     public static String stripAccents(String s) {
         s = Normalizer.normalize(s, Normalizer.Form.NFD);
         s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
         return s;
+    }
+
+    public static List<String> fromJsonToListString(String json) {
+        return GSON.fromJson(json, LIST_JSON_TYPE);
     }
 
     public static Long Dot2LongIP(String dottedIP) {
