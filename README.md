@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="http://www.yogawithkatrina.com/blog/wp-content/uploads/2010/05/2010taipeiexpo.jpg" alt="j-common-util"/>
+</p>
+
 # j-common-util
 Java common util is a opensource I've implemented for common usage cases, such as loading config, safe parse String to Int/Double/Boolean, DateTime and various third party tools use cases... It's all based on my 7 years of programming and developing
 
