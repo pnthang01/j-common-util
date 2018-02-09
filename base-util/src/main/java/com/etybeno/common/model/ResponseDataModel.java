@@ -7,12 +7,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * Created by thangpham on 13/12/2017.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResponseDataModel {
+public class ResponseDataModel<T> {
 
     private Status status;
     private String message;
     private Long count;
-    private Object data;
+    private T data;
 
     public Status getStatus() {
         return status;
@@ -32,11 +32,11 @@ public class ResponseDataModel {
         return this;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
-    public ResponseDataModel setData(Object data) {
+    public ResponseDataModel setData(T data) {
         this.data = data;
         return this;
     }

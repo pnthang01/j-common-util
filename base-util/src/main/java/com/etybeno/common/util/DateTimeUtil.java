@@ -161,10 +161,10 @@ public class DateTimeUtil {
         if (!StringUtil.isNullOrEmpty(fromTimeStr) && !fromTimeStr.equals("-")
                 && !StringUtil.isNullOrEmpty(toTimeStr) && !toTimeStr.equals("-")) {
             try {
-                rs = IntervalModel.getInstance(fromTimeStr, toTimeStr, YYYYMMDD_DASH, Calendar.DATE);
+                rs = IntervalModel.getInstance(fromTimeStr, toTimeStr, YYYYMMDDHH_DASH, Calendar.HOUR_OF_DAY);
             } catch (ParseException ex) {
                 try {
-                    rs = IntervalModel.getInstance(fromTimeStr, toTimeStr, YYYYMMDDHH_DASH, Calendar.HOUR_OF_DAY);
+                    rs = IntervalModel.getInstance(fromTimeStr, toTimeStr, YYYYMMDD_DASH, Calendar.DATE);
                 } catch (ParseException e) {
 
                 }

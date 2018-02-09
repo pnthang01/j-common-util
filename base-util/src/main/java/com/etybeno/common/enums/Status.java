@@ -7,12 +7,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public enum Status {
 
-    @JsonProperty("error")
-    ERROR("error"),
-    @JsonProperty("success")
-    SUCCESS("success"),
-    @JsonProperty("failed")
-    FAILED("failed");
+    @JsonProperty("ERROR")
+    ERROR("ERROR"),
+    @JsonProperty("SUCCESS")
+    SUCCESS("SUCCESS"),
+    @JsonProperty("FAILED")
+    FAILED("FAILED");
 
     private final String value;
 

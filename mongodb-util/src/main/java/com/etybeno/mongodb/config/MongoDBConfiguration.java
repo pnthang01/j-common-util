@@ -1,11 +1,8 @@
 package com.etybeno.mongodb.config;
 
 import com.etybeno.common.config.BaseConfiguration;
-import com.etybeno.common.util.StringUtil;
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
+import com.etybeno.mongodb.model.MongoClientInfo;
+import com.mongodb.*;
 import com.mongodb.client.MongoDatabase;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
@@ -20,7 +17,6 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -41,8 +37,7 @@ public class MongoDBConfiguration {
     }
 
     private Configuration config = null;
-    private ConcurrentMap<String, MongoClient> clients;
-    private ConcurrentMap<String, DB> dbMaps;
+    private ConcurrentMap<String, MongoClientInfo> clients;
 
     public MongoDBConfiguration() throws ConfigurationException, IOException {
         Parameters params = new Parameters();
@@ -53,11 +48,10 @@ public class MongoDBConfiguration {
                         .setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
         config = builder.getConfiguration();
         clients = new ConcurrentHashMap<>();
-        dbMaps = new ConcurrentHashMap<>();
     }
 
-    public synchronized MongoClient getMongoClient(String name) throws UnknownHostException {
-        MongoClient client = clients.get(name);
+    public synchronized MongoClientInfo getMongoClient(String name) throws UnknownHostException {
+        MongoClientInfo client = clients.get(name);
         if (null == client) {
             String keyPath = "data.mongodb." + name;
             String username = config.getString(keyPath + ".username");
@@ -69,24 +63,17 @@ public class MongoDBConfiguration {
                 String[] split = s.split(":");
                 serverAddresses.add(new ServerAddress(split[0], Integer.parseInt(split[1])));
             }
-            if (StringUtil.isNullOrEmpty(username) || StringUtil.isNullOrEmpty(password)
-                    || StringUtil.isNullOrEmpty(dbName)) {
-                client = new MongoClient(serverAddresses);
-            } else {
-                MongoCredential credential = MongoCredential
-                        .createCredential(username, dbName, password.toCharArray());
-                client = new MongoClient(serverAddresses, Arrays.asList(credential));
-            }
+            client = new MongoClientInfo(username, password, dbName, serverAddresses);
             clients.put(name, client);
         }
         return client;
     }
 
-    public MongoDatabase getMongoDB(String clientName, String dbName) throws UnknownHostException {
-        MongoClient mongoClient = getMongoClient(clientName);
+    public MongoDatabase getMongoDB(String clientName) throws UnknownHostException {
+        MongoClientInfo mongoClient = getMongoClient(clientName);
         CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
                 fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-        return mongoClient.getDatabase(dbName).withCodecRegistry(pojoCodecRegistry);
+        return mongoClient.getDatabase().withCodecRegistry(pojoCodecRegistry);
     }
 
 }

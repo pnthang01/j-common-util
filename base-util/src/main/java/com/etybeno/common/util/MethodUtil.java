@@ -7,7 +7,6 @@ import java.io.*;
  */
 public class MethodUtil {
 
-
     public static double maxValue(double... values) {
         double max = Double.MIN_VALUE;
         for(double value : values) max = Math.max(max, value);

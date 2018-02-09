@@ -28,22 +28,24 @@ public abstract class BaseDataAccess<T> {
     static final Logger LOGGER = LogManager.getLogger(BaseDataAccess.class);
 
     private String clientName;
-    private String dbName;
     private String collectionName;
     private Class<T> typeArgument;
     private MongoDatabase db;
 
-    protected BaseDataAccess(String clientName, String dbName) throws Exception {
+    protected BaseDataAccess(String clientName) throws Exception {
         this.clientName = clientName;
-        this.dbName = dbName;
-        this.db = MongoDBConfiguration._load().getMongoDB(clientName, dbName);
+        this.db = MongoDBConfiguration._load().getMongoDB(clientName);
 
         Type superclass = getClass().getGenericSuperclass();
         ParameterizedType parameterized = (ParameterizedType) superclass;
         // with nested generic types, this becomes a little more complicated
         typeArgument = (Class<T>) parameterized.getActualTypeArguments()[0];
         collectionName = typeArgument.getAnnotation(Collection.class).name();
+        //
+        if(!checkCollectionExist()) initCollection();
     }
+
+    protected abstract void initCollection();
 
     protected <T> T convertToObject(DBObject dbObject) {
         try {
@@ -55,7 +57,7 @@ public abstract class BaseDataAccess<T> {
         return null;
     }
 
-    protected Long getNextLongSequence(String name) {
+    public Long getNextLongSequence(String name) {
         Document newId = getNonTypeCollection().findOneAndUpdate(
                 Filters.eq("_id", name),
                 Updates.inc("seq", 1),
@@ -64,7 +66,7 @@ public abstract class BaseDataAccess<T> {
     }
 
 
-    protected Integer getNextIntegerSequence(String name) {
+    public Integer getNextIntegerSequence(String name) {
         Document newId = getNonTypeCollection().findOneAndUpdate(
                 Filters.eq("_id", name),
                 Updates.inc("seq", 1),
@@ -78,5 +80,12 @@ public abstract class BaseDataAccess<T> {
 
     protected MongoCollection<Document> getNonTypeCollection() {
         return db.getCollection(collectionName);
+    }
+
+    protected boolean checkCollectionExist() {
+        for(String name : db.listCollectionNames()) {
+            if(name.equalsIgnoreCase(collectionName)) return true;
+        }
+        return false;
     }
 }
