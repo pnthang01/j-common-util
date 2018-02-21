@@ -11,7 +11,7 @@ public class ResponseDataModel<T> {
 
     private Status status;
     private String message;
-    private Long count;
+    private Pager pager;
     private T data;
 
     public Status getStatus() {
@@ -41,12 +41,12 @@ public class ResponseDataModel<T> {
         return this;
     }
 
-    public Long getCount() {
-        return count;
+    public Pager getPager() {
+        return pager;
     }
 
-    public ResponseDataModel setCount(Long count) {
-        this.count = count;
+    public ResponseDataModel setPager(Pager pager) {
+        this.pager = pager;
         return this;
     }
 }

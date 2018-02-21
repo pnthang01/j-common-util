@@ -2,7 +2,8 @@ package com.etybeno.mongodb.config;
 
 import com.etybeno.common.config.BaseConfiguration;
 import com.etybeno.mongodb.model.MongoClientInfo;
-import com.mongodb.*;
+import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
@@ -71,8 +72,12 @@ public class MongoDBConfiguration {
 
     public MongoDatabase getMongoDB(String clientName) throws UnknownHostException {
         MongoClientInfo mongoClient = getMongoClient(clientName);
-        CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
-                fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+        CodecRegistry pojoCodecRegistry =
+                fromRegistries(MongoClient.getDefaultCodecRegistry(),
+                fromProviders(
+                        PojoCodecProvider.builder()
+                                .automatic(true)
+                                .build()));
         return mongoClient.getDatabase().withCodecRegistry(pojoCodecRegistry);
     }
 

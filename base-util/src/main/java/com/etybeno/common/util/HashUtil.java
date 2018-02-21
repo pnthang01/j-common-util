@@ -7,16 +7,9 @@ package com.etybeno.common.util;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 public class HashUtil {
-
-    public static void main(String[] args) throws NoSuchAlgorithmException {
-        HashValue hash = createHash("ahehehe", "MD5");
-        System.out.println(hash.asString());
-        System.out.println(hash.asCompactString());
-        System.out.println(hash.asHexString());
-        System.out.println(hash.asZeroPaddedHexString(4));
-    }
 
     public static HashValue createHash(String scriptText, String algorithm) throws NoSuchAlgorithmException {
         MessageDigest messageDigest = createMessageDigest(algorithm);
