@@ -1,16 +1,15 @@
 package com.etybeno.common.model;
 
 /**
- * Used to calculate span of buttons which will be displayed on a page
- *
- * @author Branislav Lazic
- * @author Bruno Raljic
+ * Created by thangpham on 21/02/2018.
  */
 public class Pager {
 
     private int buttonsToShow = 5;
     private int startPage;
     private int endPage;
+    private int currentPage;
+    private int totalPages;
     private long totalCount;
 
     public Pager(long totalCount) {
@@ -36,7 +35,25 @@ public class Pager {
             setStartPage(currentPage - halfPagesToShow);
             setEndPage(currentPage + halfPagesToShow);
         }
+        this.totalPages = totalPages;
+        this.currentPage = currentPage;
         this.totalCount = totalCount;
+    }
+
+    public int getTotalPages() {
+        return totalPages;
+    }
+
+    public void setTotalPages(int totalPages) {
+        this.totalPages = totalPages;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
     }
 
     public int getButtonsToShow() {

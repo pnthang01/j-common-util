@@ -11,6 +11,8 @@ import java.util.Map;
 
 public class HashUtil {
 
+    public final static String MD5 = "MD5", SHA1 = "SHA1", SHA_256 = "SHA-256";
+
     public static HashValue createHash(String scriptText, String algorithm) throws NoSuchAlgorithmException {
         MessageDigest messageDigest = createMessageDigest(algorithm);
         messageDigest.update(scriptText.getBytes());
@@ -48,7 +50,7 @@ public class HashUtil {
     }
 
     public static String createCompactMD5(String scriptText) throws NoSuchAlgorithmException {
-        return createHash(scriptText, "MD5").asCompactString();
+        return createHash(scriptText, MD5).asCompactString();
     }
 
     public static String compactStringFor(HashCode hashCode) {
@@ -60,26 +62,26 @@ public class HashUtil {
     }
 
     public static HashValue sha1(byte[] bytes) throws NoSuchAlgorithmException {
-        return createHash(new ByteArrayInputStream(bytes), "SHA1");
+        return createHash(new ByteArrayInputStream(bytes), SHA1);
     }
 
     public static HashValue sha1(InputStream inputStream) throws NoSuchAlgorithmException {
-        return createHash(inputStream, "SHA1");
+        return createHash(inputStream, SHA1);
     }
 
     public static HashValue sha1(File file) throws FileNotFoundException, NoSuchAlgorithmException {
-        return createHash(file, "SHA1");
+        return createHash(file, SHA1);
     }
 
     public static HashValue sha256(byte[] bytes) throws NoSuchAlgorithmException {
-        return createHash(new ByteArrayInputStream(bytes), "SHA-256");
+        return createHash(new ByteArrayInputStream(bytes), SHA_256);
     }
 
     public static HashValue sha256(InputStream inputStream) throws NoSuchAlgorithmException {
-        return createHash(inputStream, "SHA-256");
+        return createHash(inputStream, SHA_256);
     }
 
     public static HashValue sha256(File file) throws FileNotFoundException, NoSuchAlgorithmException {
-        return createHash(file, "SHA-256");
+        return createHash(file, SHA_256);
     }
 }
