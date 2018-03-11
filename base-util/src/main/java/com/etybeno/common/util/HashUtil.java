@@ -4,10 +4,13 @@ package com.etybeno.common.util;
  * Created by thangpham on 28/12/2017.
  */
 
+import org.apache.commons.codec.binary.Hex;
+
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.zip.CRC32;
 
 public class HashUtil {
 
@@ -31,9 +34,7 @@ public class HashUtil {
             try {
                 while (true) {
                     int nread = instr.read(buffer);
-                    if (nread < 0) {
-                        break;
-                    }
+                    if (nread < 0) break;
                     messageDigest.update(buffer, 0, nread);
                 }
             } finally {
@@ -83,5 +84,9 @@ public class HashUtil {
 
     public static HashValue sha256(File file) throws FileNotFoundException, NoSuchAlgorithmException {
         return createHash(file, SHA_256);
+    }
+
+    public static long crc64(final String s) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        return CRC64.hashByAlgo2(s.getBytes());
     }
 }
