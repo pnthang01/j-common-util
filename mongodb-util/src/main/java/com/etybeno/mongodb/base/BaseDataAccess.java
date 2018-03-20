@@ -2,8 +2,9 @@ package com.etybeno.mongodb.base;
 
 import com.etybeno.mongodb.annotation.Collection;
 import com.etybeno.mongodb.config.MongoDBConfiguration;
+import com.etybeno.mongodb.model.KeyValue;
 import com.etybeno.mongodb.model.TargetValue;
-import com.mongodb.DBObject;
+import com.etybeno.mongodb.model.TargetValues;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -14,6 +15,7 @@ import com.mongodb.client.model.Updates;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -21,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import static com.etybeno.common.util.StringUtil.OBJECT_MAPPER;
 
 /**
  * Created by thangpham on 07/12/2017.
@@ -56,6 +56,7 @@ public abstract class BaseDataAccess<T> {
 
     /**
      * Get a next long sequence, this sequence will be stored in its own collection
+     *
      * @param name
      * @return
      */
@@ -69,6 +70,7 @@ public abstract class BaseDataAccess<T> {
 
     /**
      * Get a next integer sequence, this sequence will be stored in its own collection
+     *
      * @param name
      * @return
      */
@@ -82,6 +84,7 @@ public abstract class BaseDataAccess<T> {
 
     /**
      * A typed connection, is used for POJO-mapped query
+     *
      * @return
      */
     protected MongoCollection<T> getCollection() {
@@ -90,6 +93,7 @@ public abstract class BaseDataAccess<T> {
 
     /**
      * A non-typed connection, is used for query raw data
+     *
      * @return
      */
     protected MongoCollection<Document> getNonTypeCollection() {
@@ -98,6 +102,7 @@ public abstract class BaseDataAccess<T> {
 
     /**
      * A method to check collection which is supported by this #BaseDataAccess
+     *
      * @return
      */
     protected boolean checkCollectionExist() {
@@ -108,34 +113,54 @@ public abstract class BaseDataAccess<T> {
     }
 
     /**
-     * Simple query to get an object in collection. All target values only support
-     * affirmative conditions.
+     * Simple query to count all objects by affirmative conditions.
+     *
      * @param targets
      * @return
      */
-    public T getOneByTargets(List<TargetValue> targets) {
-        return getCollection().find(Filters.and(
-                targets.stream()
-                        .map(o -> Filters.in(o.getTarget(), o.getValues()))
-                        .collect(Collectors.toSet())
-        )).first();
+    public long countByTargets(List<KeyValue> targets) {
+        if (null == targets || targets.isEmpty())
+            return getCollection().count();
+        else
+            return getCollection().count(Filters.and(buildFilters(targets)));
+    }
+
+    /**
+     * Simple query to get an object in collection. All target values only support
+     * affirmative conditions.
+     *
+     * @param targets
+     * @return
+     */
+    public T getOneByTargets(List<KeyValue> targets) {
+        return getCollection().find(Filters.and(buildFilters(targets))).first();
     }
 
     /**
      * Simple query to get a list of objects in collection. All target values only support
      * affirmative conditions.
+     *
      * @param targets
      * @return
      */
-    public List<T> getAllByTargets(List<TargetValue> targets) {
-        FindIterable<T> ts = getCollection().find(Filters.and(
-                targets.stream()
-                        .map(o -> Filters.in(o.getTarget(), o.getValues()))
-                        .collect(Collectors.toSet())
-        ));
+    public List<T> getAllByTargets(List<KeyValue> targets) {
+        FindIterable<T> ts = getCollection().find(Filters.and(buildFilters(targets)));
         List<T> rs = new ArrayList<>();
-        for(T t : ts) rs.add(t);
+        for (T t : ts) rs.add(t);
         return rs;
+    }
+
+    protected List<Bson> buildFilters(List<KeyValue> targets) {
+        return targets.stream()
+                .map(o -> {
+                    if (o instanceof TargetValues) {
+                        TargetValues multi = (TargetValues) o;
+                        return Filters.in(multi.getTarget(), multi.getValues());
+                    } else {
+                        TargetValue single = (TargetValue) o;
+                        return Filters.eq(single.getTarget(), single.getValue());
+                    }
+                }).collect(Collectors.toList());
     }
 
 }

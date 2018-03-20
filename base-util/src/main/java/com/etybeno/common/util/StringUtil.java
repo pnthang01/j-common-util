@@ -40,6 +40,29 @@ public class StringUtil {
         return num;
     }
 
+    public static double safeParseFloat(Float o) {
+        return safeParseFloat(o, 0);
+    }
+
+    public static double safeParseFloat(Object o, float defaultVal) {
+        if (null == o) return defaultVal;
+        return safeParseFloat(o.toString(), defaultVal);
+    }
+
+    public static double safeParseFloat(String s) {
+        return safeParseFloat(s, 0);
+    }
+
+    public static double safeParseFloat(String s, float defaultVal) {
+        if (isEmpty(s)) return defaultVal;
+        double n = defaultVal;
+        try {
+            n = Float.parseFloat(s);
+        } catch (Throwable e) {
+        }
+        return n;
+    }
+
     public static double safeParseDouble(Object o) {
         return safeParseDouble(o, 0);
     }
