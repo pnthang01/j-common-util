@@ -12,14 +12,17 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.DeleteResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -137,6 +140,16 @@ public abstract class BaseDataAccess<T> {
     }
 
     /**
+     * Simple query to get an object in collection. All target values only support
+     * affirmative conditions.
+     * @param targets
+     * @return
+     */
+    public T getOneByTargets(KeyValue... targets) {
+        return getOneByTargets(Arrays.asList(targets));
+    }
+
+    /**
      * Simple query to get a list of objects in collection. All target values only support
      * affirmative conditions.
      *
@@ -148,6 +161,16 @@ public abstract class BaseDataAccess<T> {
         List<T> rs = new ArrayList<>();
         for (T t : ts) rs.add(t);
         return rs;
+    }
+
+    public boolean deleteById(Object id) {
+        DeleteResult deleteResult = getCollection().deleteOne(Filters.eq("_id", id));
+        return deleteResult.getDeletedCount() == 1;
+    }
+
+    public long deleteByIds(List<?> ids) {
+        DeleteResult deleteResult = getCollection().deleteMany(Filters.in("_id", ids));
+        return deleteResult.getDeletedCount();
     }
 
     protected List<Bson> buildFilters(List<KeyValue> targets) {

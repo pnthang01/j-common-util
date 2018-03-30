@@ -20,6 +20,11 @@ public class StringUtil {
     private static final Type LIST_JSON_TYPE = new TypeToken<List<String>>() {
     }.getType();
 
+    /**
+     * Remove accent from a string
+     * @param s
+     * @return
+     */
     public static String stripAccents(String s) {
         s = Normalizer.normalize(s, Normalizer.Form.NFD);
         s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
@@ -30,6 +35,11 @@ public class StringUtil {
         return GSON.fromJson(json, LIST_JSON_TYPE);
     }
 
+    /**
+     * Convert Ipv4 to long number
+     * @param dottedIP
+     * @return
+     */
     public static Long Dot2LongIP(String dottedIP) {
         String[] addrArray = dottedIP.split("\\.");
         long num = 0;
@@ -40,22 +50,22 @@ public class StringUtil {
         return num;
     }
 
-    public static double safeParseFloat(Float o) {
+    public static float safeParseFloat(Float o) {
         return safeParseFloat(o, 0);
     }
 
-    public static double safeParseFloat(Object o, float defaultVal) {
+    public static float safeParseFloat(Object o, float defaultVal) {
         if (null == o) return defaultVal;
         return safeParseFloat(o.toString(), defaultVal);
     }
 
-    public static double safeParseFloat(String s) {
+    public static float safeParseFloat(String s) {
         return safeParseFloat(s, 0);
     }
 
-    public static double safeParseFloat(String s, float defaultVal) {
+    public static float safeParseFloat(String s, float defaultVal) {
         if (isEmpty(s)) return defaultVal;
-        double n = defaultVal;
+        float n = defaultVal;
         try {
             n = Float.parseFloat(s);
         } catch (Throwable e) {
@@ -187,11 +197,7 @@ public class StringUtil {
 
     public static String toString(Object... args) {
         StringBuilder s = new StringBuilder();
-        for (Object arg : args) {
-            if (arg != null) {
-                s.append(arg);
-            }
-        }
+        for (Object arg : args) if (arg != null) s.append(arg);
         return s.toString();
     }
 }

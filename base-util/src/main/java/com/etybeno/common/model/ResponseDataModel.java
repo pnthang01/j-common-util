@@ -9,10 +9,20 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseDataModel<T> {
 
+    private Integer code;
     private Status status;
     private String message;
     private Pager pager;
     private T data;
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public ResponseDataModel setCode(Integer code) {
+        this.code = code;
+        return this;
+    }
 
     public Status getStatus() {
         return status;
