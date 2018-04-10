@@ -24,6 +24,11 @@ public class DateTimeUtil {
     public static final String DDMMYYYY_DASH = "dd-MM-yyyy";
     public static final String HHDDMMYYYY_DASH = "HH-dd-MM-yyyy";
 
+    public static final String YYYYMMDD_SPLASH = "yyyy/MM/dd";
+    public static final String YYYYMMDDHH_SPLASH = "yyyy/MM/dd/HH";
+    public static final String DDMMYYYY_SPLASH = "dd/MM/yyyy";
+    public static final String HHDDMMYYYY_SPLASH = "HH/dd/MM/yyyy";
+
     static {
         synchronized (DateTimeUtil.class) {
             dateFmtMap = new ConcurrentHashMap<>();
@@ -35,6 +40,15 @@ public class DateTimeUtil {
             dateFmtMap.get(DDMMYYYY_DASH).put("System", FastDateFormat.getInstance(DDMMYYYY_DASH));
             dateFmtMap.put(HHDDMMYYYY_DASH, new ConcurrentHashMap<>());
             dateFmtMap.get(HHDDMMYYYY_DASH).put("System", FastDateFormat.getInstance(HHDDMMYYYY_DASH));
+            //
+            dateFmtMap.put(YYYYMMDD_SPLASH, new ConcurrentHashMap<>());
+            dateFmtMap.get(YYYYMMDD_SPLASH).put("System", FastDateFormat.getInstance(YYYYMMDD_SPLASH));
+            dateFmtMap.put(YYYYMMDDHH_SPLASH, new ConcurrentHashMap<>());
+            dateFmtMap.get(YYYYMMDDHH_SPLASH).put("System", FastDateFormat.getInstance(YYYYMMDDHH_SPLASH));
+            dateFmtMap.put(DDMMYYYY_SPLASH, new ConcurrentHashMap<>());
+            dateFmtMap.get(DDMMYYYY_SPLASH).put("System", FastDateFormat.getInstance(DDMMYYYY_SPLASH));
+            dateFmtMap.put(HHDDMMYYYY_SPLASH, new ConcurrentHashMap<>());
+            dateFmtMap.get(HHDDMMYYYY_SPLASH).put("System", FastDateFormat.getInstance(HHDDMMYYYY_SPLASH));
         }
     }
 

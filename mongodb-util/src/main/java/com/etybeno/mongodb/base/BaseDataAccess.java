@@ -61,28 +61,30 @@ public abstract class BaseDataAccess<T> {
      * Get a next long sequence, this sequence will be stored in its own collection
      *
      * @param name
+     * @param seqName
      * @return
      */
-    public Long getNextLongSequence(String name) {
+    public Long getNextLongSequence(String name, String seqName) {
         Document newId = getNonTypeCollection().findOneAndUpdate(
                 Filters.eq("_id", name),
-                Updates.inc("seq", 1),
+                Updates.inc(seqName, 1),
                 new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER).upsert(true).maxTime(0, TimeUnit.SECONDS));
-        return Long.parseLong(newId.get("seq").toString());
+        return Long.parseLong(newId.get(seqName).toString());
     }
 
     /**
      * Get a next integer sequence, this sequence will be stored in its own collection
      *
      * @param name
+     * @param seqName
      * @return
      */
-    public Integer getNextIntegerSequence(String name) {
+    public Integer getNextIntegerSequence(String name, String seqName) {
         Document newId = getNonTypeCollection().findOneAndUpdate(
                 Filters.eq("_id", name),
-                Updates.inc("seq", 1),
+                Updates.inc(seqName, 1),
                 new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER).upsert(true).maxTime(0, TimeUnit.SECONDS));
-        return Integer.parseInt(newId.get("seq").toString());
+        return Integer.parseInt(newId.get(seqName).toString());
     }
 
     /**
