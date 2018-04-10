@@ -1,15 +1,23 @@
 package com.etybeno.common.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by thangpham on 21/02/2018.
  */
 public class Pager {
 
+    @JsonProperty("buttons_to_show")
     private int buttonsToShow = 5;
+    @JsonProperty("start_page")
     private int startPage;
+    @JsonProperty("end_page")
     private int endPage;
+    @JsonProperty("current_page")
     private int currentPage;
+    @JsonProperty("total_pages")
     private int totalPages;
+    @JsonProperty("total_count")
     private long totalCount;
 
     public Pager(long totalCount) {
