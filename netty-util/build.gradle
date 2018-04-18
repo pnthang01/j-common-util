@@ -1,0 +1,33 @@
+group 'com.etybeno'
+version '1.0'
+
+apply plugin: 'java'
+
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    flatDir {
+        dirs 'lib'
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+dependencies {
+    compile group: 'com.etybeno', name: 'base-util', version: '1.0'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.9.2'
+    compile 'io.netty:netty-all:4.1.23.Final'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}

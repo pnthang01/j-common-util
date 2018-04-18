@@ -6,7 +6,10 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.text.Normalizer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -22,6 +25,7 @@ public class StringUtil {
 
     /**
      * Remove accent from a string
+     *
      * @param s
      * @return
      */
@@ -37,6 +41,7 @@ public class StringUtil {
 
     /**
      * Convert Ipv4 to long number
+     *
      * @param dottedIP
      * @return
      */
@@ -199,5 +204,27 @@ public class StringUtil {
         StringBuilder s = new StringBuilder();
         for (Object arg : args) if (arg != null) s.append(arg);
         return s.toString();
+    }
+
+    /**
+     * Parse arguments from main method to map. If the keys set is empty, it will not be validate.
+     * The arguments array must be divisible by 2.
+     *
+     * @param args
+     * @param keys
+     * @return
+     */
+    public static Map<String, String> parseMainArgs(String[] args, Set<String> keys) {
+        if (args == null || args.length == 0 || args.length % 2 == 1) return null;
+        Map<String, String> rs = new HashMap<>();
+        for (int i = 0; i < args.length; i += 2) {
+            String key = args[i], value = args[i + 1];
+            if (!keys.isEmpty() && !key.contains(key)) {
+                throw new IllegalArgumentException(String.format("Key %s is out of scope in %s",
+                        key, StringUtil.GSON.toJson(keys)));
+            }
+            rs.put(key, value);
+        }
+        return rs;
     }
 }

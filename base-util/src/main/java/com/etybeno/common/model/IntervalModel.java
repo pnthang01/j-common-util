@@ -2,22 +2,42 @@ package com.etybeno.common.model;
 
 import com.etybeno.common.util.DateTimeUtil;
 import com.etybeno.common.util.StringUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.beans.Transient;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by thangpham on 12/12/2017.
+ * Created by thangpham on 08/01/2018.
  */
-public class IntervalModel {
+public class IntervalModel implements Serializable{
 
+    public static final int FORWARD = 1, BACKWARD = -1;
+
+    @JsonIgnore
     private transient Date fromDateTime;
     private String fromDate;
+    @JsonIgnore
     private transient Date toDateTime;
     private String toDate;
     private String format;
     private int timeType = -2;
+
+    @JsonIgnore
+    private transient Calendar currentRoll;
+    @JsonIgnore
+    private transient Calendar deadline;
+    @JsonIgnore
+    private transient int rollMode;
+    @JsonIgnore
+    private transient int rollTimeUnit;
+    @JsonIgnore
+    private transient boolean includeStart = true;
+    @JsonIgnore
+    private transient boolean includeEnd = true;
 
     /**
      * Your custom Interval format and #Calendar.type
@@ -35,6 +55,8 @@ public class IntervalModel {
         if (fromDateTime.compareTo(toDateTime) > 0) throw new IllegalArgumentException("From_time is after To_time");
         this.fromDate = DateTimeUtil.formatDate(fromDateTime, fmt);
         this.toDate = DateTimeUtil.formatDate(toDateTime, fmt);
+        this.fromDateTime = fromDateTime;
+        this.toDateTime = toDateTime;
         this.format = fmt;
         this.timeType = timeType;
     }
@@ -185,21 +207,68 @@ public class IntervalModel {
         return union;
     }
 
-//    @Override
-//    public int compareTo(IntervalModel o) {
-//        int rs = 0;
-//        try {
-//            if (this.getFromDateTime().compareTo(o.getFromDateTime()) < 0) rs--;
-//            else if (this.getFromDateTime().compareTo(o.getFromDateTime()) > 0) rs++;
-//            if (this.getFromDateTime().compareTo(o.getToDateTime()) < 0) rs--;
-//            else if (this.getFromDateTime().compareTo(o.getToDateTime()) > 0) rs++;
-//            if (this.getToDateTime().compareTo(o.getToDateTime()) < 0) rs--;
-//            if (this.getToDateTime().compareTo(o.getFromDateTime()) < 0) rs--;
-//
-//
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//        return rs;
-//    }
+    public IntervalModel setRollTimeUnit(int timeUnit) {
+        this.rollTimeUnit = timeUnit;
+        return this;
+    }
+
+    public IntervalModel setRollMode(int rollUpMode) {
+        this.rollMode = rollUpMode;
+        return this;
+    }
+
+    public IntervalModel setIncludeStart(boolean include) {
+        this.includeStart = include;
+        return this;
+    }
+
+    public IntervalModel setIncludeEnd(boolean include) {
+        this.includeEnd = include;
+        return this;
+    }
+
+    public IntervalModel setRollOptions(int timeUnit, int rollMode, boolean includeStart, boolean includeEnd) {
+        this.rollTimeUnit = timeUnit;
+        this.rollMode = rollMode;
+        this.includeStart = includeStart;
+        this.includeEnd = includeEnd;
+        return this;
+    }
+
+    public void resetRollup() {
+        this.rollMode = 0;
+        this.rollTimeUnit = 0;
+        this.includeStart = true;
+        this.includeEnd = true;
+        this.currentRoll = null;
+        this.deadline = null;
+    }
+
+    /**
+     * Get next datetime, the default result is forwarded date. Set roll mode for backward mode.
+     * @return
+     */
+    public Date next() {
+        Date rs = null;
+        initialeRollup();
+        //
+        int compare = currentRoll.compareTo(deadline) * -1;
+        if (compare == rollMode || (includeEnd && compare == 0)) {
+            rs = currentRoll.getTime();
+            currentRoll.add(rollTimeUnit, rollMode);
+        }
+        return rs;
+    }
+
+    private synchronized void initialeRollup() {
+        if(null == currentRoll) {
+            currentRoll = Calendar.getInstance();
+            deadline = Calendar.getInstance();
+            rollMode = rollMode != -1 && rollMode != 1 ? FORWARD : rollMode;
+            rollTimeUnit = rollTimeUnit == 0 ? timeType : rollTimeUnit;
+            currentRoll.setTime(rollMode == FORWARD ? fromDateTime : toDateTime);
+            if (!includeStart) currentRoll.add(rollTimeUnit, rollMode);
+            deadline.setTime(rollMode == FORWARD ? toDateTime : fromDateTime);
+        }
+    }
 }

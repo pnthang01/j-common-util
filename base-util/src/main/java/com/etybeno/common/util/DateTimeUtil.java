@@ -16,6 +16,18 @@ import java.util.concurrent.ConcurrentMap;
 //<Format, <TimeZone, FastDateFormat>>
 public class DateTimeUtil {
 
+    public static final String TODAY = "TODAY";
+    public static final String YESTERDAY = "YESTERDAY";
+    public static final String LAST_24HOURS = "LAST_24HOURS";
+    public static final String LAST_72HOURS = "LAST_72HOURS";
+    public static final String LAST_3DAYS = "LAST_3DAYS";
+    public static final String LAST_7DAYS = "LAST_7DAYS";
+    public static final String LAST_14DAYS = "LAST_14DAYS";
+    public static final String LAST_30DAYS = "LAST_30DAYS";
+    public static final String THIS_MONTH = "THIS_MONTH";
+    public static final String LAST_MONTH = "LAST_MONTH";
+
+
     //<Format, <TimeZone, FastDateFormat>>
     private static ConcurrentMap<String, ConcurrentMap<String, FastDateFormat>> dateFmtMap;
 

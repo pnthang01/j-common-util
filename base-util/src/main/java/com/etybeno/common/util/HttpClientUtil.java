@@ -33,13 +33,19 @@ public class HttpClientUtil {
     private int MAX_SIZE = 10;
     private int DEFAULT_TIMEOUT = 300 * 1000;//15 seconds
 
-    public synchronized static HttpClientUtil _load() {
-        if (null == _instance) _instance = new HttpClientUtil(10);
+    public synchronized static HttpClientUtil _initialize(int size, int timeout) {
+        if(null == _instance) _instance = new HttpClientUtil(size, timeout);
         return _instance;
     }
 
-    public HttpClientUtil(int size) {
+    public synchronized static HttpClientUtil _load() {
+        if (null == _instance) _instance = new HttpClientUtil(10, 300);
+        return _instance;
+    }
+
+    public HttpClientUtil(int size, int timeout) {
         MAX_SIZE = size;
+        DEFAULT_TIMEOUT = timeout * 1000;
         httpClientPool = new ConcurrentHashMap<>(MAX_SIZE);
     }
 
@@ -138,9 +144,7 @@ public class HttpClientUtil {
             throw e;
         } finally {
             try {
-                if (response != null) {
-                    response.close();
-                }
+                if (response != null) response.close();
             } catch (Exception err) {
             }
         }
