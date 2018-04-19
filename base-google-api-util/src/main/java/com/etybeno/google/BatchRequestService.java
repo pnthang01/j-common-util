@@ -1,6 +1,7 @@
 package com.etybeno.google;
 
 import com.etybeno.common.service.ThreadPoolService;
+import com.etybeno.google.model.BatchRequestModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

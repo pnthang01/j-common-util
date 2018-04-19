@@ -1,4 +1,4 @@
-package com.etybeno.google;
+package com.etybeno.google.model;
 
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
 import com.google.api.client.googleapis.services.json.AbstractGoogleJsonClientRequest;
@@ -7,6 +7,7 @@ import com.google.api.client.googleapis.services.json.AbstractGoogleJsonClientRe
  * Created by thangpham on 23/12/2017.
  */
 public class BatchRequestModel<T> {
+
     private AbstractGoogleJsonClientRequest<T> request;
     private JsonBatchCallback callback;
 

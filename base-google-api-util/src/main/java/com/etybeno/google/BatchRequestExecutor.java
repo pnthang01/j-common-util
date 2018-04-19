@@ -1,5 +1,6 @@
 package com.etybeno.google;
 
+import com.etybeno.google.model.BatchRequestModel;
 import com.google.api.client.googleapis.batch.BatchRequest;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
