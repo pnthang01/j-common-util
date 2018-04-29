@@ -26,6 +26,7 @@ publishing {
 }
 dependencies {
     compile group: 'com.etybeno', name: 'base-util', version: '1.0'
+    compile 'commons-io:commons-io:2.6'
     compile 'com.fasterxml.jackson.core:jackson-core:2.9.2'
     compile 'io.netty:netty-all:4.1.23.Final'
 

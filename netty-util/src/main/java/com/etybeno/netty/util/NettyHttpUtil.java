@@ -1,4 +1,4 @@
-package com.etybeno.netty;
+package com.etybeno.netty.util;
 
 import com.etybeno.common.util.StringPool;
 import com.etybeno.common.util.StringUtil;
@@ -87,6 +87,13 @@ public class NettyHttpUtil {
         FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.OK, byteBuf);
         response.headers().set(CONTENT_TYPE, StringPool.MIME_TYPE_UTF8_TEXT);
         response.headers().set(CONTENT_LENGTH, byteBuf.readableBytes());
+        response.headers().set(CONNECTION, HEADER_CONNECTION_CLOSE);
+        return response;
+    }
+
+    public static FullHttpResponse theHttpStatus(HttpResponseStatus status) {
+        FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status);
+        response.headers().set(CONTENT_TYPE, StringPool.MIME_TYPE_UTF8_TEXT);
         response.headers().set(CONNECTION, HEADER_CONNECTION_CLOSE);
         return response;
     }

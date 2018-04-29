@@ -26,12 +26,15 @@ public class GoogleDrivePermissionService {
     }
 
 
-    public Drive.Permissions.Create createPermission(String fileId, Type type, Role role, boolean withLink) throws IOException {
-        Permission permission = new Permission()
+    public Drive.Permissions.Create createPermissionRequest(String fileId, Type type, Role role, boolean withLink) throws IOException {
+        return driveService.drive().permissions().create(fileId, createPermission(fileId, type, role, withLink));
+    }
+
+    public Permission createPermission(String fileId, Type type, Role role, boolean withLink) {
+        return new Permission()
                 .setType(type.getValue())
                 .setRole(role.getValue())
                 .setAllowFileDiscovery(withLink);
-        return driveService.drive().permissions().create(fileId, permission);
     }
 
 }

@@ -219,7 +219,7 @@ public class StringUtil {
         Map<String, String> rs = new HashMap<>();
         for (int i = 0; i < args.length; i += 2) {
             String key = args[i], value = args[i + 1];
-            if (!keys.isEmpty() && !key.contains(key)) {
+            if (null != keys && !keys.isEmpty() && !key.contains(key)) {
                 throw new IllegalArgumentException(String.format("Key %s is out of scope in %s",
                         key, StringUtil.GSON.toJson(keys)));
             }

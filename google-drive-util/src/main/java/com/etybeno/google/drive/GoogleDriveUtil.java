@@ -35,15 +35,4 @@ public class GoogleDriveUtil {
         return convertMimeType(split[split.length - 1]);
     }
 
-    public static void main(String[] args) {
-        double s = 755.58, sum = 0;
-        int step = 3;
-        for(int i = 0; i < step; i++) {
-            sum += s;
-            s *= 2;
-            System.out.println("cost: " + s + " sum: " + sum);
-        }
-
-        System.out.println(sum / 0.76 / 3600);
-    }
 }

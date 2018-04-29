@@ -2,8 +2,8 @@ package com.etybeno.google;
 
 import com.etybeno.common.service.ThreadPoolService;
 import com.etybeno.google.model.BatchRequestModel;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class BatchRequestService implements Runnable {
 
-    static final Logger LOGGER = LogManager.getLogger(BatchRequestService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BatchRequestService.class);
     private static BatchRequestService _instance;
 
     public static synchronized BatchRequestService _load() {
@@ -29,9 +29,9 @@ public class BatchRequestService implements Runnable {
         ThreadPoolService.load().addThread(this, 1000, 1000, TimeUnit.MILLISECONDS);
     }
 
-    public void setBatchExecutor(BatchRequestExecutor batchExecutor) {
-        BatchRequestExecutor put = batchMap.put(batchExecutor.getName(), batchExecutor);
-        if (null != put && !put.isEmpty()) put.execute();
+    public BatchRequestExecutor addBatchExecutor(BatchRequestExecutor batchExecutor) {
+        BatchRequestExecutor executor = batchMap.putIfAbsent(batchExecutor.getName(), batchExecutor);
+        return executor;
     }
 
     public void addRequest(String batchName, BatchRequestModel batchRequestModel) {
@@ -45,8 +45,10 @@ public class BatchRequestService implements Runnable {
     public void run() {
         batchMap.forEach((s, batchRequestExecutor) -> {
             try {
-                LOGGER.info("Start to execute batch: " + s);
-                batchRequestExecutor.execute();
+                if(!batchRequestExecutor.isEmpty()) {
+                    LOGGER.info("Start to execute batch: " + s);
+                    batchRequestExecutor.execute();
+                }
             } catch (Exception ex) {
                 LOGGER.error("Error when executing batch: " + s);
             }

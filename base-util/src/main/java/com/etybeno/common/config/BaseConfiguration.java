@@ -21,7 +21,6 @@ public class BaseConfiguration {
     private static String NETTY_SERVER_CONFIG_FILE = "netty-server-configs.properties";
     private static String MONGODB_CONFIG_FILE = "mongodb-configs.properties";
     private static String REST_DATA_CONFIG_FILE = "rest-data-configs.properties";
-    private static String GOOGLE_DRIVE_AUTHORIZE_JSON = "google_drive_client_secrets.json";
 
     public static void setBaseConfig(String targetConfDir) throws IllegalArgumentException {
         if (StringUtil.isNullOrEmpty(targetConfDir)) throw new IllegalArgumentException(
@@ -45,14 +44,6 @@ public class BaseConfiguration {
 
     public static void setApplicationConfigFile(String fileName) {
         APPLICATION_CONFIG_FILE = fileName;
-    }
-
-    public static String getGoogleDriveAuthorizeJson() {
-        return baseConfig + GOOGLE_DRIVE_AUTHORIZE_JSON;
-    }
-
-    public static void setGoogleDriveAuthorizeJson(String fileName) {
-        GOOGLE_DRIVE_AUTHORIZE_JSON = fileName;
     }
 
     public static String getMongodbConfigFile() {
