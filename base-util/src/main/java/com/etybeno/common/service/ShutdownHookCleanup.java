@@ -2,8 +2,8 @@ package com.etybeno.common.service;
 
 import com.etybeno.common.service.model.ExecutorCleanupUnit;
 import com.etybeno.common.service.model.IService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ShutdownHookCleanup {
 
-    static final Logger LOGGER = LogManager.getLogger(ShutdownHookCleanup.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(ShutdownHookCleanup.class);
     private final Deque<ExecutorCleanupUnit> cleanUpExecutor = new ArrayDeque<>();
     private final Deque<IService> cleanupService = new ArrayDeque();
     private static ShutdownHookCleanup _instance;

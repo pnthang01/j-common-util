@@ -30,6 +30,10 @@ public class BaseConfiguration {
         }
     }
 
+    public static String getBaseConfig() {
+        return baseConfig;
+    }
+
     public static String getApplicationConfigFile() {
         return baseConfig + APPLICATION_CONFIG_FILE;
     }

@@ -11,28 +11,28 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.DeleteResult;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by thangpham on 07/12/2017.
  */
 public abstract class BaseDataAccess<T> {
 
-    static final Logger LOGGER = LogManager.getLogger(BaseDataAccess.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(BaseDataAccess.class);
 
-    private String clientName;
     private String collectionName;
     private Class<T> typeArgument;
     private MongoDatabase db;
@@ -46,11 +46,8 @@ public abstract class BaseDataAccess<T> {
         return null;
     }
 
-
     protected BaseDataAccess(String clientName) throws Exception {
-        this.clientName = clientName;
         this.db = MongoDBConfiguration._load().getMongoDB(clientName);
-
         Type superclass = getClass().getGenericSuperclass();
         ParameterizedType parameterized = (ParameterizedType) superclass;
         // with nested generic types, this becomes a little more complicated
@@ -126,11 +123,16 @@ public abstract class BaseDataAccess<T> {
      * @param targets
      * @return
      */
-    public long countByTargets(List<KeyValue> targets) {
-        if (null == targets || targets.isEmpty())
-            return getCollection().count();
-        else
-            return getCollection().count(Filters.and(buildFilters(targets)));
+    public long count(List<KeyValue> targets) {
+        if (null == targets || targets.isEmpty()) return getCollection().count();
+        else return getCollection().count(Filters.and(buildFilters(targets)));
+    }
+
+    public <O> O getOne(List<KeyValue> targets,int projectionType, @Nonnull Class<O> outputClass) {
+        List<Bson> aggregates = new ArrayList();
+        if (targets != null && !targets.isEmpty()) aggregates.add(Aggregates.match(Filters.and(buildFilters(targets))));
+        if (projectionType > -1) aggregates.add(Aggregates.project(buildProjection(projectionType)));
+        return getCollection().aggregate(aggregates, outputClass).first();
     }
 
     /**
@@ -140,18 +142,23 @@ public abstract class BaseDataAccess<T> {
      * @param targets
      * @return
      */
-    public T getOneByTargets(List<KeyValue> targets) {
+    public T getOne(List<KeyValue> targets) {
         return getCollection().find(Filters.and(buildFilters(targets))).first();
     }
 
     /**
-     * Simple query to get an object in collection. All target values only support
-     * affirmative conditions.
+     * Simple query to get a raw data (#Document class) in collection. All target values only
+     * support affirmative conditions.
+     *
      * @param targets
+     * @param projectionType
      * @return
      */
-    public T getOneByTargets(KeyValue... targets) {
-        return getOneByTargets(Arrays.asList(targets));
+    public Document getRawOne(List<KeyValue> targets, int projectionType) {
+        List<Bson> aggregates = new ArrayList();
+        if (targets != null && !targets.isEmpty()) aggregates.add(Aggregates.match(Filters.and(buildFilters(targets))));
+        if (projectionType > -1) aggregates.add(Aggregates.project(buildProjection(projectionType)));
+        return getNonTypeCollection().aggregate(aggregates).first();
     }
 
     /**
@@ -161,7 +168,7 @@ public abstract class BaseDataAccess<T> {
      * @param targets
      * @return
      */
-    public List<T> getAllByTargets(List<KeyValue> targets) {
+    public List<T> getAll(List<KeyValue> targets) {
         FindIterable<T> ts = getCollection().find(Filters.and(buildFilters(targets)));
         List<T> rs = new ArrayList<>();
         for (T t : ts) rs.add(t);
@@ -171,6 +178,7 @@ public abstract class BaseDataAccess<T> {
     /**
      * Query method to get a list of objects in collection, which is paginated and sorted All target values only support
      * affirmative conditions. The outcome will base on #outputClass, remember that this result only work for properties in collection.
+     *
      * @param targets
      * @param from
      * @param size
@@ -180,20 +188,31 @@ public abstract class BaseDataAccess<T> {
      * @param <O>
      * @return
      */
-    public <O> List<O> getAllByTarget(List<KeyValue> targets, int from, int size, Map<String, Object> sorts,
-                              int projectionType, @Nonnull Class<O> outputClass) {
+    public <O> List<O> getAll(List<KeyValue> targets, int from, int size, Map<String, Object> sorts, int projectionType, @Nonnull Class<O> outputClass) {
         List<Bson> aggregates = new ArrayList();
         if (targets != null && !targets.isEmpty()) aggregates.add(Aggregates.match(Filters.and(buildFilters(targets))));
         if (sorts != null && !sorts.isEmpty()) aggregates.add(Aggregates.sort(new Document(sorts)));
-        if(from > -1) aggregates.add(Aggregates.skip(from));
-        if(size > -1) aggregates.add(Aggregates.limit(size));
-        aggregates.add(Aggregates.project(buildProjection(projectionType)));
+        if (from > -1) aggregates.add(Aggregates.skip(from));
+        if (size > -1) aggregates.add(Aggregates.limit(size));
+        if (projectionType > -1) aggregates.add(Aggregates.project(buildProjection(projectionType)));
         AggregateIterable<O> aggregate = getCollection().aggregate(aggregates, outputClass);
         List<O> result = new ArrayList();
         for (O t : aggregate) result.add(t);
         return result;
     }
 
+    public List<Document> getRawAll(List<KeyValue> targets, int from, int size, Map<String, Object> sorts, int projectionType) {
+        List<Bson> aggregates = new ArrayList();
+        if (targets != null && !targets.isEmpty()) aggregates.add(Aggregates.match(Filters.and(buildFilters(targets))));
+        if (sorts != null && !sorts.isEmpty()) aggregates.add(Aggregates.sort(new Document(sorts)));
+        if (from > -1) aggregates.add(Aggregates.skip(from));
+        if (size > -1) aggregates.add(Aggregates.limit(size));
+        if (projectionType > -1) aggregates.add(Aggregates.project(buildProjection(projectionType)));
+        AggregateIterable<Document> aggregate = getNonTypeCollection().aggregate(aggregates);
+        List<Document> result = new ArrayList();
+        for (Document t : aggregate) result.add(t);
+        return result;
+    }
 
     public boolean deleteById(Object id) {
         DeleteResult deleteResult = getCollection().deleteOne(Filters.eq("_id", id));

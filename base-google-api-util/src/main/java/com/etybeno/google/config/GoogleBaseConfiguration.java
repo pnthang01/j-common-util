@@ -7,7 +7,7 @@ import com.etybeno.common.util.StringUtil;
  */
 public class GoogleBaseConfiguration {
 
-    private static String baseConfig = "config/";
+    private static String baseConfig = "config/google/";
 
     private static String GOOGLE_DRIVE_AUTHORIZE_JSON = "google_drive_client_secrets.json";
 
@@ -17,6 +17,10 @@ public class GoogleBaseConfiguration {
         synchronized (baseConfig) {
             GoogleBaseConfiguration.baseConfig = targetConfDir;
         }
+    }
+
+    public static String getBaseConfig() {
+        return baseConfig;
     }
 
     public static String getGoogleDriveAuthorizeJson() {

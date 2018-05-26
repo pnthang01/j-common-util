@@ -16,9 +16,8 @@ import com.google.api.services.drive.Drive;
 public class GoogleDriveConnection {
 
     private String appName;
-    private DriveServiceInformation information;
-
     private Drive drive;
+    private DriveServiceInformation information;
     private final BatchRequestService batchService = BatchRequestService._load();
 
     public GoogleDriveConnection(String appName, DriveServiceInformation information) throws Exception {

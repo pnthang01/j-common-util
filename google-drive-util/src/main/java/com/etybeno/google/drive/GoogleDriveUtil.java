@@ -1,6 +1,12 @@
 package com.etybeno.google.drive;
 
+import com.etybeno.google.util.SingletonUtil;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * Created by thangpham on 18/12/2017.
@@ -35,4 +41,12 @@ public class GoogleDriveUtil {
         return convertMimeType(split[split.length - 1]);
     }
 
+    public static GoogleClientSecrets loadGoogleClientSecrets(String fileName) throws IOException {
+        return loadGoogleClientSecrets(new java.io.File(fileName));
+    }
+
+    public static GoogleClientSecrets loadGoogleClientSecrets(File secretFile) throws IOException {
+        return GoogleClientSecrets.load(SingletonUtil.getJsonFactory(),
+                new FileReader(secretFile));
+    }
 }
