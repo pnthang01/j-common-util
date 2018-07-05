@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * Created by thangpham on 19/04/2018.
  */
-public class NettyServerConfiguration {
+public class NettyServerConfiguration{
 
     private static NettyServerConfiguration _instance;
 
@@ -45,6 +45,10 @@ public class NettyServerConfiguration {
 
     public int getPort() {
         return config.getInt("server.port");
+    }
+
+    public int getSslPort() {
+        return config.getInt("server.ssl.port");
     }
 
     public int getBossGroupThread() {

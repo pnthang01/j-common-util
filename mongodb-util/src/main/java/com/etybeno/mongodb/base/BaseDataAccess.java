@@ -33,9 +33,9 @@ public abstract class BaseDataAccess<T> {
 
     static final Logger LOGGER = LoggerFactory.getLogger(BaseDataAccess.class);
 
-    private String collectionName;
-    private Class<T> typeArgument;
-    private MongoDatabase db;
+    protected String collectionName;
+    protected Class<T> typeArgument;
+    protected MongoDatabase db;
 
     /**
      * This abstract collection is used to initialize collection in MongoDB if it hasn't existed
@@ -201,10 +201,13 @@ public abstract class BaseDataAccess<T> {
         return result;
     }
 
-    public List<Document> getRawAll(List<KeyValue> targets, int from, int size, Map<String, Object> sorts, int projectionType) {
+    public List<Document> getRawAll(List<KeyValue> targets, int from, int size, List<TargetValue> sorts, int projectionType) {
         List<Bson> aggregates = new ArrayList();
         if (targets != null && !targets.isEmpty()) aggregates.add(Aggregates.match(Filters.and(buildFilters(targets))));
-        if (sorts != null && !sorts.isEmpty()) aggregates.add(Aggregates.sort(new Document(sorts)));
+        if (sorts != null && !sorts.isEmpty()) {
+            Map<String, Object> sortMap = sorts.stream().collect(Collectors.toMap(o -> o.getTarget(), o -> o.getValue()));
+            aggregates.add(Aggregates.sort(new Document(sortMap)));
+        }
         if (from > -1) aggregates.add(Aggregates.skip(from));
         if (size > -1) aggregates.add(Aggregates.limit(size));
         if (projectionType > -1) aggregates.add(Aggregates.project(buildProjection(projectionType)));
